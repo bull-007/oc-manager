@@ -1,0 +1,240 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  avatar       String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  ocs          OC[]
+  worlds       World[]
+  tags         Tag[]
+  inspirations Inspiration[]
+  stories      Story[]
+}
+
+model OC {
+  id               String     @id @default(uuid())
+  name             String
+  age              Int?
+  gender           String?
+  species          String?
+  occupation       String?
+  nationality      String?
+  residence        String?
+
+  // 外貌
+  height           String?
+  bodyType         String?
+  hairColor        String?
+  eyeColor         String?
+  clothingStyle    String?
+  specialFeatures  String?
+
+  // 性格
+  personality      String     @default("[]") // JSON array of tags
+  mbti             String?
+  strengths        String?
+  weaknesses       String?
+  quirks           String?
+  taboos           String?
+  fears            String?
+  motto            String?
+
+  // 背景故事
+  background       String?    // TipTap JSON
+  secrets          String?
+
+  // 能力
+  abilities        String?
+  fightingStyle    String?
+  weapons          String?
+  skills           String?
+  abilityWeaknesses String?
+
+  // 其他
+  likes            String?
+  dislikes         String?
+  habits           String?
+  belongings       String?
+  quotes           String     @default("[]") // JSON array
+  themeSong        String?
+
+  // 状态
+  status           String     @default("draft") // draft, public, private
+
+  userId           String
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  worldId          String?
+  world            World?     @relation(fields: [worldId], references: [id], onDelete: SetNull)
+
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  // 关系
+  relationsFrom    Relation[] @relation("FromOC")
+  relationsTo      Relation[] @relation("ToOC")
+  media            Media[]
+  ocTags           OcTag[]
+  inspirations     Inspiration[]
+  timelineEvents   TimelineEvent[]
+}
+
+model World {
+  id            String     @id @default(uuid())
+  name          String
+  type          String?    // 奇幻/科幻/现代/古代/混合
+  coreConcept   String?
+  era           String?
+  techLevel     String?
+  overview      String?
+
+  // 地理
+  geography     String?    // TipTap JSON
+
+  // 历史
+  history       String?    // TipTap JSON
+
+  // 社会文化
+  society       String?    // TipTap JSON
+  religions     String?
+  festivals     String?
+  laws          String?
+  currency      String?
+  artStyle      String?
+
+  // 势力
+  factions      String?    // TipTap JSON
+
+  // 特殊体系
+  magicSystem   String?
+
+  status        String     @default("draft")
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  ocs           OC[]
+  locations     Location[]
+  media         Media[]
+  stories       Story[]
+  timelineEvents TimelineEvent[]
+}
+
+model Location {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  coordinates String  @default("{\"x\":0,\"y\":0}") // JSON {x, y}
+  imageUrl    String?
+  worldId     String
+  world       World   @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Relation {
+  id          String   @id @default(uuid())
+  type        String   // family, lover, friend, enemy, other
+  intimacy    Int      @default(50)
+  description String?
+  fromOcId    String
+  fromOc      OC       @relation("FromOC", fields: [fromOcId], references: [id], onDelete: Cascade)
+  toOcId      String
+  toOc        OC       @relation("ToOC", fields: [toOcId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+}
+
+model Tag {
+  id      String   @id @default(uuid())
+  name    String
+  color   String   @default("#D4844A")
+  userId  String
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ocTags  OcTag[]
+
+  createdAt DateTime @default(now())
+}
+
+model OcTag {
+  id    String @id @default(uuid())
+  ocId  String
+  oc    OC     @relation(fields: [ocId], references: [id], onDelete: Cascade)
+  tagId String
+  tag   Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([ocId, tagId])
+}
+
+model Media {
+  id       String   @id @default(uuid())
+  url      String
+  type     String   // image, audio, video, file
+  category String   @default("gallery") // avatar, gallery, reference
+  ocId     String?
+  oc       OC?      @relation(fields: [ocId], references: [id], onDelete: Cascade)
+  worldId  String?
+  world    World?   @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Inspiration {
+  id          String   @id @default(uuid())
+  content     String
+  tags        String   @default("[]") // JSON array
+  relatedOcId String?
+  relatedOc   OC?      @relation(fields: [relatedOcId], references: [id], onDelete: SetNull)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+}
+
+model Story {
+  id      String   @id @default(uuid())
+  title   String
+  type    String   @default("main") // main, side, extra
+  content String?  // TipTap JSON
+  status  String   @default("draft")
+  worldId String?
+  world   World?   @relation(fields: [worldId], references: [id], onDelete: SetNull)
+  userId  String
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  timelineEvents TimelineEvent[]
+}
+
+model TimelineEvent {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  date        String   // 可灵活输入的时间字符串
+  type        String   @default("world") // world, oc, story
+  worldId     String?
+  world       World?   @relation(fields: [worldId], references: [id], onDelete: SetNull)
+  ocId        String?
+  oc          OC?      @relation(fields: [ocId], references: [id], onDelete: SetNull)
+  storyId     String?
+  story       Story?   @relation(fields: [storyId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+}
