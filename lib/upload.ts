@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import crypto from "crypto";
 
 const QINIU_ACCESS_KEY =
   process.env.QINIU_ACCESS_KEY || "J5p1IAk0bV3AVNfV5yuRSBUgv3IbTnbcN0rQdE2a";
@@ -9,8 +10,7 @@ const QINIU_DOMAIN =
   process.env.QINIU_DOMAIN || "ti22b7maq.hn-bkt.clouddn.com";
 const QINIU_UPLOAD_URL = "https://upload-z2.qiniup.com";
 
-// Simple base64url encode
-function base64UrlEncode(str: string): string {
+function urlsafeBase64(str: string): string {
   return Buffer.from(str)
     .toString("base64")
     .replace(/\+/g, "-")
@@ -18,35 +18,22 @@ function base64UrlEncode(str: string): string {
     .replace(/=+$/, "");
 }
 
-// Generate upload token using HMAC-SHA1
-async function getUploadToken(): Promise<string> {
+function getUploadToken(): string {
   const putPolicy = JSON.stringify({
     scope: QINIU_BUCKET,
     deadline: Math.floor(Date.now() / 1000) + 3600,
   });
 
-  const encodedPutPolicy = base64UrlEncode(putPolicy);
+  const encodedPutPolicy = urlsafeBase64(putPolicy);
 
-  // HMAC-SHA1 sign using Web Crypto API
-  const encoder = new TextEncoder();
-  const keyData = encoder.encode(QINIU_SECRET_KEY);
-  const messageData = encoder.encode(encodedPutPolicy);
-
-  const cryptoKey = await crypto.subtle.importKey(
-    "raw",
-    keyData,
-    { name: "HMAC", hash: "SHA-1" },
-    false,
-    ["sign"]
-  );
-
-  const signature = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
-  const signBase64 = Buffer.from(signature).toString("base64")
+  const hmac = crypto.createHmac("sha1", QINIU_SECRET_KEY);
+  hmac.update(encodedPutPolicy);
+  const sign = hmac.digest("base64")
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/, "");
 
-  return `${QINIU_ACCESS_KEY}:${signBase64}:${encodedPutPolicy}`;
+  return `${QINIU_ACCESS_KEY}:${sign}:${encodedPutPolicy}`;
 }
 
 export async function saveFile(file: File): Promise<string> {
@@ -58,7 +45,7 @@ export async function saveFile(file: File): Promise<string> {
     : ".png";
   const key = `oc-images/${uuidv4()}${ext}`;
 
-  const token = await getUploadToken();
+  const token = getUploadToken();
 
   const formData = new FormData();
   formData.append("token", token);
@@ -83,5 +70,4 @@ export async function saveFile(file: File): Promise<string> {
 
 export async function deleteFile(url: string): Promise<void> {
   if (!url.includes("clouddn.com") && !url.includes("qiniu")) return;
-  // Deletion not critical for now — skip silently
 }
