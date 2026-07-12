@@ -8,14 +8,13 @@ const QINIU_SECRET_KEY =
 const QINIU_BUCKET = process.env.QINIU_BUCKET || "ocimages";
 const QINIU_DOMAIN =
   process.env.QINIU_DOMAIN || "ti22b7maq.hn-bkt.clouddn.com";
-const QINIU_UPLOAD_URL = "https://upload-z2.qiniup.com";
+const QINIU_UPLOAD_URL = "https://up-z2.qiniup.com";
 
 function urlsafeBase64(str: string): string {
   return Buffer.from(str)
     .toString("base64")
     .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+    .replace(/\//g, "_");
 }
 
 function getUploadToken(): string {
@@ -30,8 +29,7 @@ function getUploadToken(): string {
   hmac.update(encodedPutPolicy);
   const sign = hmac.digest("base64")
     .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+    .replace(/\//g, "_");
 
   return `${QINIU_ACCESS_KEY}:${sign}:${encodedPutPolicy}`;
 }
