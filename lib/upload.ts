@@ -46,11 +46,7 @@ async function getUploadToken(): Promise<string> {
     .replace(/\//g, "_")
     .replace(/=+$/, "");
 
-  const encodedSign = base64UrlEncode(
-    `${QINIU_ACCESS_KEY}:${signBase64}`
-  );
-
-  return `${encodedSign}:${encodedPutPolicy}`;
+  return `${QINIU_ACCESS_KEY}:${signBase64}:${encodedPutPolicy}`;
 }
 
 export async function saveFile(file: File): Promise<string> {
