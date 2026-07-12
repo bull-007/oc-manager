@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { saveFile } from "@/lib/upload";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
