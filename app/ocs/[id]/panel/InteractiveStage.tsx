@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { RELATION_TYPES, type RelationType } from "@/lib/utils";
 
 interface Relation {
@@ -188,10 +189,6 @@ export default function InteractiveStage({
           className="group relative cursor-pointer select-none outline-none"
           title="点击互动"
         >
-          <div className={`absolute inset-0 rounded-full bg-amber-300/10 blur-2xl scale-125 transition-all duration-700 ${
-            popping ? "scale-150 bg-amber-400/30" : "group-hover:bg-amber-400/15 group-hover:scale-140"
-          }`} />
-
           {sparkles.map((s) => (
             <span key={s.id} className="absolute text-amber-400 pointer-events-none animate-sparkle-out"
               style={{ left: `${s.x}%`, top: `${s.y}%`, fontSize: "10px" }}>✦</span>
@@ -271,11 +268,20 @@ export default function InteractiveStage({
             <div className="flex justify-center mt-2">
               <button
                 onClick={async () => {
-                  await fetch(`/api/ocs/${ocId}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ cutoutPosX: posX, cutoutPosY: posY }),
-                  });
+                  try {
+                    const res = await fetch(`/api/ocs/${ocId}`, {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ cutoutPosX: posX, cutoutPosY: posY }),
+                    });
+                    if (res.ok) {
+                      toast.success("位置已保存");
+                    } else {
+                      toast.error("保存失败");
+                    }
+                  } catch {
+                    toast.error("网络错误");
+                  }
                   setEditPosition(false);
                 }}
                 className="text-xs px-4 py-1 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors"
