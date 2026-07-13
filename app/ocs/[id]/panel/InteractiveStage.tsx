@@ -14,6 +14,9 @@ interface Relation {
 interface Props {
   ocName: string;
   avatarUrl: string | null;
+  cutoutUrl: string | null;
+  cutoutPosX: number;
+  cutoutPosY: number;
   quotes: string[];
   species: string | null;
   occupation: string | null;
@@ -28,6 +31,9 @@ const FLOAT_ICONS = ["✦", "✧", "◇", "◆", "♢", "♤", "♧", "♡"];
 export default function InteractiveStage({
   ocName,
   avatarUrl,
+  cutoutUrl,
+  cutoutPosX,
+  cutoutPosY,
   quotes,
   species,
   occupation,
@@ -195,19 +201,33 @@ export default function InteractiveStage({
             </span>
           ))}
 
-          {/* Avatar ring */}
+          {/* Avatar / Cutout display */}
           <div
             ref={avatarRef}
-            className={`relative w-44 h-44 sm:w-52 sm:h-52 rounded-full border-[3px] shadow-2xl overflow-hidden bg-amber-50 transition-all duration-300 ${
+            className={`relative transition-all duration-300 ${
+              cutoutUrl
+                ? "w-64 h-80 sm:w-72 sm:h-96"
+                : "w-44 h-44 sm:w-52 sm:h-52 rounded-full border-[3px] overflow-hidden bg-amber-50 shadow-2xl"
+            } ${
               popping
-                ? "scale-105 border-amber-400 shadow-amber-300/40"
-                : "scale-100 border-amber-200 shadow-amber-200/20 group-hover:scale-[1.03] group-hover:border-amber-300 group-hover:shadow-amber-200/30"
+                ? "scale-105 border-amber-400"
+                : `scale-100 ${cutoutUrl ? "" : "border-amber-200 shadow-amber-200/20 group-hover:scale-[1.03] group-hover:border-amber-300 group-hover:shadow-amber-200/30"}`
             }`}
             style={{
               animation: popping ? "pop-bounce 0.3s ease-out" : "none",
             }}
           >
-            {avatarUrl ? (
+            {cutoutUrl ? (
+              <img
+                src={cutoutUrl}
+                alt={ocName}
+                className="w-full h-full object-contain"
+                style={{
+                  objectPosition: `${cutoutPosX}% ${cutoutPosY}%`,
+                }}
+                draggable={false}
+              />
+            ) : avatarUrl ? (
               <img
                 src={avatarUrl}
                 alt={ocName}

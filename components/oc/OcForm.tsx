@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import TagInput from "@/components/ui/TagInput";
 import ImageUpload from "@/components/ui/ImageUpload";
 import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import BackgroundRemover from "./BackgroundRemover";
 
 const PERSONALITY_SUGGESTIONS = [
   "开朗", "内向", "温柔", "冷酷", "热血", "腹黑", "天然呆",
@@ -52,6 +54,9 @@ interface OcFormData {
   worldId: string;
   tags: string[];
   images: string[];
+  cutoutUrl: string;
+  cutoutPosX: number;
+  cutoutPosY: number;
 }
 
 const emptyForm: OcFormData = {
@@ -65,6 +70,7 @@ const emptyForm: OcFormData = {
   likes: "", dislikes: "", habits: "", belongings: "",
   quotes: "", themeSong: "", status: "draft", worldId: "",
   tags: [], images: [],
+  cutoutUrl: "", cutoutPosX: 50, cutoutPosY: 50,
 };
 
 interface Props {
@@ -77,6 +83,7 @@ export default function OcForm({ initialData, isEditing }: Props) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<OcFormData>(emptyForm);
   const [activeTab, setActiveTab] = useState("basic");
+  const [showCutout, setShowCutout] = useState(false);
   const [worlds, setWorlds] = useState<any[]>([]);
   const [availableTags, setAvailableTags] = useState<any[]>([]);
 
@@ -125,6 +132,9 @@ export default function OcForm({ initialData, isEditing }: Props) {
         worldId: initialData.worldId || "",
         tags: initialData.ocTags?.map((t: any) => t.tag.id) || [],
         images: initialData.media?.map((m: any) => m.url) || [],
+        cutoutUrl: initialData.cutoutUrl || "",
+        cutoutPosX: initialData.cutoutPosX ?? 50,
+        cutoutPosY: initialData.cutoutPosY ?? 50,
       });
     }
   }, [initialData]);
@@ -183,6 +193,9 @@ export default function OcForm({ initialData, isEditing }: Props) {
       worldId: form.worldId || null,
       tags: form.tags,
       imageUrls: form.images,
+      cutoutUrl: form.cutoutUrl || null,
+      cutoutPosX: form.cutoutPosX,
+      cutoutPosY: form.cutoutPosY,
     };
 
     try {
@@ -369,6 +382,75 @@ export default function OcForm({ initialData, isEditing }: Props) {
                 max={5}
               />
             </div>
+
+            {/* AI Cutout */}
+            {form.images.length > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-warm-brown">AI 抠图</p>
+                    <p className="text-xs text-warm-muted">去除背景，让角色站在面板中央</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowCutout(true)}
+                    className="px-4 py-2 text-sm bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors"
+                  >
+                    {form.cutoutUrl ? "重新抠图" : "开始抠图"}
+                  </button>
+                </div>
+
+                {form.cutoutUrl && (
+                  <div>
+                    <p className="text-xs text-warm-muted mb-2">抠图预览</p>
+                    <div className="w-24 h-24 rounded-lg overflow-hidden border border-amber-300 bg-[repeating-conic-gradient(#e5e5e5_0%_25%,#fff_0%_50%)_50%/12px_12px]">
+                      <img src={form.cutoutUrl} alt="抠图结果" className="w-full h-full object-contain" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Position controls */}
+            {form.cutoutUrl && (
+              <div className="bg-warm-cream border border-warm-border rounded-xl p-4 space-y-3">
+                <p className="text-sm font-medium text-warm-brown">角色位置微调</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-warm-muted mb-1 block">水平位置 ({form.cutoutPosX}%)</label>
+                    <input
+                      type="range"
+                      min="0" max="100"
+                      value={form.cutoutPosX}
+                      onChange={(e) => update("cutoutPosX", Number(e.target.value))}
+                      className="w-full accent-amber-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-warm-muted mb-1 block">垂直位置 ({form.cutoutPosY}%)</label>
+                    <input
+                      type="range"
+                      min="0" max="100"
+                      value={form.cutoutPosY}
+                      onChange={(e) => update("cutoutPosY", Number(e.target.value))}
+                      className="w-full accent-amber-600"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-warm-muted">调节角色在互动面板中的显示位置</p>
+              </div>
+            )}
+
+            {/* Cutout Modal */}
+            <Modal open={showCutout} onClose={() => setShowCutout(false)} title="AI 抠图" size="lg">
+              <BackgroundRemover
+                imageUrl={form.images[0]}
+                onCutoutComplete={(url) => {
+                  update("cutoutUrl", url);
+                }}
+                onClose={() => setShowCutout(false)}
+              />
+            </Modal>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

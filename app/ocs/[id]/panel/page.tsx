@@ -59,6 +59,9 @@ export default async function PanelPage({
       <InteractiveStage
         ocName={oc.name}
         avatarUrl={avatarUrl}
+        cutoutUrl={oc.cutoutUrl}
+        cutoutPosX={oc.cutoutPosX}
+        cutoutPosY={oc.cutoutPosY}
         quotes={quotes}
         species={oc.species}
         occupation={oc.occupation}

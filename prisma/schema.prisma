@@ -41,6 +41,11 @@ model OC {
   clothingStyle    String?
   specialFeatures  String?
 
+  // 抠图
+  cutoutUrl        String?
+  cutoutPosX       Int        @default(50)
+  cutoutPosY       Int        @default(50)
+
   // 性格
   personality      String     @default("[]") // JSON array of tags
   mbti             String?
