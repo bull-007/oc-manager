@@ -163,15 +163,15 @@ export default function InteractiveStage({
 
       {/* Center stage */}
       <div className="relative z-10 flex flex-col items-center">
-        {/* Speech bubble - positioned randomly */}
+        {/* Speech bubble - oval pill, positioned randomly */}
         <div
-          className={`absolute transition-all duration-300 pointer-events-none ${
-            showSpeech && speech ? "opacity-100 scale-100" : "opacity-0 scale-90"
+          className={`absolute z-20 transition-all duration-300 pointer-events-none ${
+            showSpeech && speech ? "opacity-100 scale-100" : "opacity-0 scale-95"
           }`}
           style={{ ...bubblePos, transform: `translate(${bubblePos.tx}, ${bubblePos.ty})` }}
         >
-          <div className="bg-warm-paper/95 backdrop-blur-sm border border-amber-200 rounded-2xl px-4 py-2 max-w-[200px] shadow-lg relative">
-            <p className="text-[12px] text-warm-brown leading-relaxed text-center">
+          <div className="bg-warm-paper/95 backdrop-blur-sm border border-amber-200 rounded-full px-5 py-2.5 max-w-[260px] shadow-lg relative">
+            <p className="text-[12px] text-warm-brown leading-relaxed whitespace-normal break-words">
               {speech || " "}
             </p>
             <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-warm-paper/95 border-r border-b border-amber-200 rotate-45" />

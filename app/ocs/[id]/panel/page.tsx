@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import InteractiveStage from "./InteractiveStage";
 import InfoSidebar from "./InfoSidebar";
+import SidebarToggle from "./SidebarToggle";
 
 export default async function PanelPage({
   params,
@@ -37,25 +38,20 @@ export default async function PanelPage({
 
   const relations = [
     ...oc.relationsFrom.map((r) => ({
-      name: r.toOc.name,
-      id: r.toOc.id,
-      type: r.type,
-      intimacy: r.intimacy,
+      name: r.toOc.name, id: r.toOc.id, type: r.type, intimacy: r.intimacy,
     })),
     ...oc.relationsTo.map((r) => ({
-      name: r.fromOc.name,
-      id: r.fromOc.id,
-      type: r.type,
-      intimacy: r.intimacy,
+      name: r.fromOc.name, id: r.fromOc.id, type: r.type, intimacy: r.intimacy,
     })),
   ];
 
   return (
-    <div className="h-[calc(100vh-5rem)] flex animate-slide-up">
-      {/* Left: Info Sidebar */}
-      <InfoSidebar oc={oc} personality={personality} relations={relations} />
+    <div className="h-[calc(100vh-5rem)] flex animate-slide-up relative">
+      {/* Collapsible sidebar wrapper */}
+      <SidebarToggle>
+        <InfoSidebar oc={oc} personality={personality} relations={relations} />
+      </SidebarToggle>
 
-      {/* Center: Interactive Character Stage */}
       <InteractiveStage
         ocName={oc.name}
         avatarUrl={avatarUrl}
