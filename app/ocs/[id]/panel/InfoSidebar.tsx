@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { RELATION_TYPES, type RelationType, getOCProgress } from "@/lib/utils";
 import ProgressRing from "@/components/ui/ProgressRing";
+import DiarySection from "@/components/oc/DiarySection";
 
 interface Relation {
   name: string;
@@ -180,6 +181,9 @@ export default function InfoSidebar({ oc, personality, relations }: Props) {
           <p className="text-warm-brown/70 text-[10px]">🎵 {oc.themeSong}</p>
         </section>
       )}
+
+      {/* Daily Question */}
+      <DiarySection ocId={oc.id} />
 
       {/* Status */}
       <section className="pt-2 border-t border-warm-border/30">

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { getOCProgress } from "@/lib/utils";
 import ProgressRing from "@/components/ui/ProgressRing";
+import DailyQuestion from "@/components/oc/DailyQuestion";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -158,6 +159,10 @@ export default async function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Daily Questions */}
+      <DailyQuestion />
+
     </div>
   );
 }
