@@ -96,7 +96,7 @@ export default function OCsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {ocs.map((oc: any) => (
-          <Link key={oc.id} href={`/ocs/${oc.id}`}>
+          <Link key={oc.id} href={`/ocs/${oc.id}/panel`}>
             <Card hover padding="md" className="h-full">
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-warm-border">

@@ -113,7 +113,7 @@ export default async function DashboardPage() {
             {recentOCs.map((oc) => (
               <Link
                 key={oc.id}
-                href={`/ocs/${oc.id}`}
+                href={`/ocs/${oc.id}/panel`}
                 className="bg-warm-paper border border-warm-border rounded-xl p-5 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex items-center gap-4"
               >
                 <div className="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 overflow-hidden border border-warm-border">

@@ -132,7 +132,7 @@ export default function RelationsPage() {
       .join("g")
       .style("cursor", "pointer")
       .on("click", (_event, d) => {
-        window.location.href = `/ocs/${d.id}`;
+        window.location.href = `/ocs/${d.id}/panel`;
       });
 
     // Node circles
