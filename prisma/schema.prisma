@@ -27,6 +27,7 @@ model OC {
   id               String     @id @default(uuid())
   name             String
   age              Int?
+  birthday         String?   // MM-DD format
   gender           String?
   species          String?
   occupation       String?

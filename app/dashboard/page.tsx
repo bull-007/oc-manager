@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getOCProgress } from "@/lib/utils";
 import ProgressRing from "@/components/ui/ProgressRing";
 import DailyQuestion from "@/components/oc/DailyQuestion";
+import BirthdayBanner from "@/components/oc/BirthdayBanner";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -48,6 +49,9 @@ export default async function DashboardPage() {
         </h1>
         <p className="text-warm-muted mt-1">你的创作宇宙概览</p>
       </div>
+
+      {/* Birthday Banner */}
+      <BirthdayBanner />
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

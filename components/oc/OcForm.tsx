@@ -19,6 +19,7 @@ const PERSONALITY_SUGGESTIONS = [
 interface OcFormData {
   name: string;
   age: string;
+  birthday: string;
   gender: string;
   species: string;
   occupation: string;
@@ -61,7 +62,7 @@ interface OcFormData {
 }
 
 const emptyForm: OcFormData = {
-  name: "", age: "", gender: "", species: "", occupation: "",
+  name: "", age: "", birthday: "", gender: "", species: "", occupation: "",
   nationality: "", residence: "", height: "", bodyType: "",
   hairColor: "", eyeColor: "", clothingStyle: "", specialFeatures: "",
   personality: [], mbti: "", strengths: "", weaknesses: "",
@@ -97,6 +98,7 @@ export default function OcForm({ initialData, isEditing }: Props) {
       setForm({
         name: initialData.name || "",
         age: initialData.age?.toString() || "",
+        birthday: initialData.birthday || "",
         gender: initialData.gender || "",
         species: initialData.species || "",
         occupation: initialData.occupation || "",
@@ -156,6 +158,7 @@ export default function OcForm({ initialData, isEditing }: Props) {
     const payload = {
       name: form.name,
       age: form.age ? parseInt(form.age) : null,
+      birthday: form.birthday || null,
       gender: form.gender || null,
       species: form.species || null,
       occupation: form.occupation || null,
@@ -282,6 +285,17 @@ export default function OcForm({ initialData, isEditing }: Props) {
                   value={form.age}
                   onChange={(e) => update("age", e.target.value)}
                   className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>生日</label>
+                <input
+                  type="text"
+                  value={form.birthday}
+                  onChange={(e) => update("birthday", e.target.value)}
+                  className={inputClass}
+                  placeholder="MM-DD 如 03-15"
+                  maxLength={5}
                 />
               </div>
               <div>
