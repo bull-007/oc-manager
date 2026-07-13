@@ -54,6 +54,7 @@ interface OcFormData {
   themeSong: string;
   status: string;
   worldId: string;
+  categoryId: string;
   tags: string[];
   images: string[];
   cutoutUrl: string;
@@ -70,7 +71,7 @@ const emptyForm: OcFormData = {
   background: "", secrets: "", abilities: "", fightingStyle: "",
   weapons: "", skills: "", abilityWeaknesses: "",
   likes: "", dislikes: "", habits: "", belongings: "",
-  quotes: [], themeSong: "", status: "draft", worldId: "",
+  quotes: [], themeSong: "", status: "draft", worldId: "", categoryId: "",
   tags: [], images: [],
   cutoutUrl: "", cutoutPosX: 50, cutoutPosY: 50,
 };
@@ -87,11 +88,13 @@ export default function OcForm({ initialData, isEditing }: Props) {
   const [activeTab, setActiveTab] = useState("basic");
   const [showCutout, setShowCutout] = useState(false);
   const [worlds, setWorlds] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [availableTags, setAvailableTags] = useState<any[]>([]);
 
   useEffect(() => {
     // Load worlds and tags for the form
     fetch("/api/worlds").then(r => r.json()).then(d => setWorlds(d.worlds || []));
+    fetch("/api/categories").then(r => r.json()).then(d => setCategories(d.categories || []));
     fetch("/api/tags").then(r => r.json()).then(d => setAvailableTags(d.tags || []));
 
     if (initialData) {
@@ -133,6 +136,7 @@ export default function OcForm({ initialData, isEditing }: Props) {
         themeSong: initialData.themeSong || "",
         status: initialData.status || "draft",
         worldId: initialData.worldId || "",
+        categoryId: initialData.categoryId || "",
         tags: initialData.ocTags?.map((t: any) => t.tag.id) || [],
         images: initialData.media?.map((m: any) => m.url) || [],
         cutoutUrl: initialData.cutoutUrl || "",
@@ -193,6 +197,7 @@ export default function OcForm({ initialData, isEditing }: Props) {
       themeSong: form.themeSong || null,
       status: form.status,
       worldId: form.worldId || null,
+      categoryId: form.categoryId || null,
       tags: form.tags,
       imageUrls: form.images,
       cutoutUrl: form.cutoutUrl || null,
@@ -363,6 +368,19 @@ export default function OcForm({ initialData, isEditing }: Props) {
                     <option key={w.id} value={w.id}>
                       {w.name}
                     </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>分类</label>
+                <select
+                  value={form.categoryId}
+                  onChange={(e) => update("categoryId", e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">未分类</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
               </div>
