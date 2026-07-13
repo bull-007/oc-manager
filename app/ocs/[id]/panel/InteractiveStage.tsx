@@ -18,6 +18,7 @@ interface Props {
   cutoutUrl: string | null;
   cutoutPosX: number;
   cutoutPosY: number;
+  cutoutZoom: number;
   quotes: string[];
   species: string | null;
   occupation: string | null;
@@ -47,6 +48,7 @@ export default function InteractiveStage({
   cutoutUrl,
   cutoutPosX,
   cutoutPosY,
+  cutoutZoom,
   quotes,
   species,
   occupation,
@@ -62,6 +64,7 @@ export default function InteractiveStage({
   const [editPosition, setEditPosition] = useState(false);
   const [posX, setPosX] = useState(cutoutPosX);
   const [posY, setPosY] = useState(cutoutPosY);
+  const [zoom, setZoom] = useState(cutoutZoom);
   const [bubblePos, setBubblePos] = useState(BUBBLE_POSITIONS[0]);
   const [showToolbar, setShowToolbar] = useState(false);
   const avatarRef = useRef<HTMLDivElement>(null);
@@ -206,8 +209,10 @@ export default function InteractiveStage({
           >
             {cutoutUrl ? (
               <img src={cutoutUrl} alt={ocName}
-                className="w-full h-full object-cover"
-                style={{ objectPosition: `${posX}% ${posY}%` }}
+                className="w-full h-full object-contain"
+                style={{
+                  transform: `translate(${(posX - 50) * 0.4}%, ${(posY - 50) * 0.4}%) scale(${zoom})`,
+                }}
                 draggable={false}
               />
             ) : avatarUrl ? (
@@ -227,7 +232,14 @@ export default function InteractiveStage({
       }`}>
         {cutoutUrl && (
           <button
-            onClick={() => setEditPosition(!editPosition)}
+            onClick={() => {
+              if (editPosition) {
+                setPosX(cutoutPosX);
+                setPosY(cutoutPosY);
+                setZoom(cutoutZoom);
+              }
+              setEditPosition(!editPosition);
+            }}
             className={`text-[11px] px-2.5 py-1.5 rounded-full border transition-all ${
               editPosition
                 ? "bg-amber-100 border-amber-300 text-amber-800"
@@ -249,8 +261,8 @@ export default function InteractiveStage({
       {editPosition && cutoutUrl && (
         <div className="absolute bottom-6 left-6 right-6 z-30 animate-slide-up">
           <div className="bg-warm-paper/95 backdrop-blur-sm border border-amber-200 rounded-xl p-3 shadow-lg max-w-md mx-auto">
-            <p className="text-[10px] text-warm-muted mb-2 text-center">拖拽滑块调节角色位置</p>
-            <div className="grid grid-cols-2 gap-4">
+            <p className="text-[10px] text-warm-muted mb-2 text-center">拖拽滑块调节角色</p>
+            <div className="space-y-3">
               <div>
                 <div className="flex justify-between text-[10px] text-warm-muted mb-0.5">
                   <span>← 水平 →</span><span>{posX}%</span>
@@ -267,29 +279,38 @@ export default function InteractiveStage({
                   onChange={(e) => setPosY(Number(e.target.value))}
                   className="w-full accent-amber-600 h-1" />
               </div>
+              <div>
+                <div className="flex justify-between text-[10px] text-warm-muted mb-0.5">
+                  <span>🔍 缩放</span><span>{zoom.toFixed(1)}x</span>
+                </div>
+                <input type="range" min="0.5" max="2.5" step="0.1" value={zoom}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full accent-amber-600 h-1" />
+              </div>
             </div>
-            <div className="flex justify-center mt-2">
+            <div className="flex justify-center gap-2 mt-3">
+              <button
+                onClick={() => { setPosX(50); setPosY(50); setZoom(1); }}
+                className="text-[10px] px-2 py-1 text-warm-muted border border-warm-border rounded hover:bg-warm-cream"
+              >
+                重置
+              </button>
               <button
                 onClick={async () => {
                   try {
                     const res = await fetch(`/api/ocs/${ocId}`, {
                       method: "PUT",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ cutoutPosX: posX, cutoutPosY: posY }),
+                      body: JSON.stringify({ cutoutPosX: posX, cutoutPosY: posY, cutoutZoom: zoom }),
                     });
-                    if (res.ok) {
-                      toast.success("位置已保存");
-                    } else {
-                      toast.error("保存失败");
-                    }
-                  } catch {
-                    toast.error("网络错误");
-                  }
+                    if (res.ok) toast.success("已保存");
+                    else toast.error("保存失败");
+                  } catch { toast.error("网络错误"); }
                   setEditPosition(false);
                 }}
                 className="text-xs px-4 py-1 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors"
               >
-                保存位置
+                保存
               </button>
             </div>
           </div>

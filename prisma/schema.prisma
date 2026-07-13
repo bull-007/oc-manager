@@ -45,6 +45,7 @@ model OC {
   cutoutUrl        String?
   cutoutPosX       Int        @default(50)
   cutoutPosY       Int        @default(50)
+  cutoutZoom       Float      @default(1.0)
 
   // 性格
   personality      String     @default("[]") // JSON array of tags

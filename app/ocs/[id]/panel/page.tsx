@@ -58,6 +58,7 @@ export default async function PanelPage({
         cutoutUrl={oc.cutoutUrl}
         cutoutPosX={oc.cutoutPosX}
         cutoutPosY={oc.cutoutPosY}
+        cutoutZoom={oc.cutoutZoom}
         quotes={quotes}
         species={oc.species}
         occupation={oc.occupation}
