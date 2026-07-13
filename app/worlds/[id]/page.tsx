@@ -127,7 +127,7 @@ export default async function WorldDetailPage({
             {world.ocs.map((oc) => (
               <Link
                 key={oc.id}
-                href={`/ocs/${oc.id}`}
+                href={`/ocs/${oc.id}/panel`}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-warm-cream border border-warm-border rounded-lg hover:bg-amber-50 hover:border-amber-300 transition-colors text-sm"
               >
                 ◆ {oc.name}

@@ -62,7 +62,7 @@ export default function RelationList({
                 {isFromCurrent ? "→" : "←"} {type.label}
               </span>
               <Link
-                href={`/ocs/${relatedOc?.id}`}
+                href={`/ocs/${relatedOc?.id}/panel`}
                 className="font-medium text-warm-brown hover:text-amber-700 truncate"
               >
                 {relatedOc?.name}
