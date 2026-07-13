@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@imgly/background-removal": "^1.7.0",
     "@prisma/client": "^5.22.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/d3": "^7.4.3",

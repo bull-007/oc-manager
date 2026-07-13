@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
 
 interface Props {
@@ -9,51 +9,113 @@ interface Props {
   onClose: () => void;
 }
 
-export default function BackgroundRemover({ imageUrl, onCutoutComplete, onClose }: Props) {
+export default function BackgroundRemover({
+  imageUrl,
+  onCutoutComplete,
+  onClose,
+}: Props) {
   const [processing, setProcessing] = useState(false);
-  const [progress, setProgress] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
+  const [tolerance, setTolerance] = useState(40);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
 
-  const handleRemove = async () => {
+  // Load image and do initial preview
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      imgRef.current = img;
+      processImage(img, tolerance).then(setPreview);
+    };
+    img.src = imageUrl;
+  }, [imageUrl]);
+
+  const processImage = (
+    img: HTMLImageElement,
+    tol: number
+  ): Promise<string> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const { data } = imageData;
+
+      // Sample background color from 4 corners
+      const corners = [
+        [0, 0],
+        [canvas.width - 1, 0],
+        [0, canvas.height - 1],
+        [canvas.width - 1, canvas.height - 1],
+      ];
+      const bg: number[] = [0, 0, 0];
+      corners.forEach(([x, y]) => {
+        const i = (y * canvas.width + x) * 4;
+        bg[0] += data[i];
+        bg[1] += data[i + 1];
+        bg[2] += data[i + 2];
+      });
+      bg[0] = Math.round(bg[0] / 4);
+      bg[1] = Math.round(bg[1] / 4);
+      bg[2] = Math.round(bg[2] / 4);
+
+      // Remove pixels close to background color
+      for (let i = 0; i < data.length; i += 4) {
+        const dr = data[i] - bg[0];
+        const dg = data[i + 1] - bg[1];
+        const db = data[i + 2] - bg[2];
+        const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+
+        // Feather edge: gradually reduce alpha
+        const feather = 20;
+        if (dist < tol) {
+          data[i + 3] = 0; // Fully transparent
+        } else if (dist < tol + feather) {
+          const alpha = ((dist - tol) / feather) * 255;
+          data[i + 3] = Math.round(alpha);
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      resolve(canvas.toDataURL("image/png"));
+    });
+  };
+
+  const handleReprocess = async () => {
+    if (!imgRef.current) return;
+    const dataUrl = await processImage(imgRef.current, tolerance);
+    setPreview(dataUrl);
+  };
+
+  const handleApply = async () => {
+    if (!preview) return;
     setProcessing(true);
-    setProgress("正在下载模型...");
 
     try {
-      // Dynamically import the heavy library
-      const { removeBackground } = await import("@imgly/background-removal");
+      // Convert dataURL to blob
+      const res = await fetch(preview);
+      const blob = await res.blob();
 
-      setProgress("AI 正在抠图...");
-
-      // Process the image - converts to blob with transparent background
-      const resultBlob = await removeBackground(imageUrl, {
-        progress: (key, current, total) => {
-          const percent = Math.round((current / total) * 100);
-          setProgress(`处理中... ${percent}%`);
-        },
-      });
-
-      setProgress("上传中...");
-
-      // Upload the cutout to Qiniu
+      // Upload
       const formData = new FormData();
-      formData.append("file", resultBlob, "cutout.png");
-
-      const res = await fetch("/api/media/upload", {
+      formData.append("file", blob, "cutout.png");
+      const uploadRes = await fetch("/api/media/upload", {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("上传失败");
-      const data = await res.json();
-
-      setPreview(data.url);
+      if (!uploadRes.ok) throw new Error("上传失败");
+      const data = await uploadRes.json();
       onCutoutComplete(data.url);
       toast.success("抠图完成！");
-      setProcessing(false);
-    } catch (err: any) {
-      toast.error(err.message || "抠图失败，请重试");
-      setProcessing(false);
+    } catch {
+      toast.error("上传失败");
     }
+    setProcessing(false);
   };
 
   return (
@@ -71,27 +133,51 @@ export default function BackgroundRemover({ imageUrl, onCutoutComplete, onClose 
           </div>
         </div>
 
-        {/* Result / Processing */}
+        {/* Preview */}
         <div className="flex-1">
-          <p className="text-xs text-warm-muted mb-1">
-            {preview ? "抠图结果" : "预览"}
-          </p>
-          <div className="aspect-square rounded-lg overflow-hidden border border-warm-border bg-[repeating-conic-gradient(#e5e5e5_0%_25%,#fff_0%_50%)_50%/16px_16px] flex items-center justify-center">
-            {processing ? (
-              <div className="text-center">
-                <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                <p className="text-xs text-warm-muted">{progress}</p>
-              </div>
-            ) : preview ? (
+          <p className="text-xs text-warm-muted mb-1">结果预览</p>
+          <div className="aspect-square rounded-lg overflow-hidden border border-warm-border bg-[repeating-conic-gradient(#ddd_0%_25%,#fff_0%_50%)_50%/12px_12px]">
+            {preview ? (
               <img
                 src={preview}
                 alt="抠图结果"
                 className="w-full h-full object-contain"
               />
             ) : (
-              <p className="text-xs text-warm-muted">等待处理</p>
+              <div className="w-full h-full flex items-center justify-center">
+                <p className="text-xs text-warm-muted">处理中...</p>
+              </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Tolerance slider */}
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <label className="text-xs text-warm-muted">
+            容差：{tolerance}
+          </label>
+          <button
+            onClick={handleReprocess}
+            className="text-xs text-amber-700 hover:text-amber-800"
+          >
+            重新处理
+          </button>
+        </div>
+        <input
+          type="range"
+          min="10"
+          max="120"
+          value={tolerance}
+          onChange={(e) => setTolerance(Number(e.target.value))}
+          onMouseUp={handleReprocess}
+          onTouchEnd={handleReprocess}
+          className="w-full accent-amber-600"
+        />
+        <div className="flex justify-between text-[10px] text-warm-muted">
+          <span>更透明</span>
+          <span>更保留</span>
         </div>
       </div>
 
@@ -104,29 +190,13 @@ export default function BackgroundRemover({ imageUrl, onCutoutComplete, onClose 
         >
           取消
         </button>
-        {!preview ? (
-          <button
-            onClick={handleRemove}
-            disabled={processing}
-            className="px-4 py-2 text-sm bg-amber-700 text-warm-cream rounded-lg hover:bg-amber-800 disabled:opacity-50 flex items-center gap-2"
-          >
-            {processing ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                {progress}
-              </>
-            ) : (
-              "开始抠图"
-            )}
-          </button>
-        ) : (
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm bg-amber-700 text-warm-cream rounded-lg hover:bg-amber-800"
-          >
-            完成
-          </button>
-        )}
+        <button
+          onClick={handleApply}
+          disabled={processing}
+          className="px-4 py-2 text-sm bg-amber-700 text-warm-cream rounded-lg hover:bg-amber-800 disabled:opacity-50"
+        >
+          {processing ? "上传中..." : "确认使用"}
+        </button>
       </div>
     </div>
   );
