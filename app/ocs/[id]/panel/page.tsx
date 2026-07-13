@@ -46,7 +46,7 @@ export default async function PanelPage({
   ];
 
   return (
-    <div className="h-[calc(100vh-5rem)] flex animate-slide-up relative">
+    <div className="flex-1 min-h-0 flex animate-slide-up relative">
       {/* Collapsible sidebar wrapper */}
       <SidebarToggle>
         <InfoSidebar oc={oc} personality={personality} relations={relations} />

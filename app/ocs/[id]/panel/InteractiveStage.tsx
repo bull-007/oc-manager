@@ -101,7 +101,7 @@ export default function InteractiveStage({
       setSpeech(randomQuote);
       setBubblePos(randomPos);
       setShowSpeech(true);
-      setTimeout(() => setShowSpeech(false), 3500);
+      setTimeout(() => setShowSpeech(false), 6000);
     },
     [quotes]
   );
@@ -111,7 +111,7 @@ export default function InteractiveStage({
       setSpeech(quotes[Math.floor(Math.random() * quotes.length)]);
       setBubblePos(BUBBLE_POSITIONS[Math.floor(Math.random() * BUBBLE_POSITIONS.length)]);
       setShowSpeech(true);
-      setTimeout(() => setShowSpeech(false), 3500);
+      setTimeout(() => setShowSpeech(false), 6000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
