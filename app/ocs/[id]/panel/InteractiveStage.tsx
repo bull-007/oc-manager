@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { RELATION_TYPES, type RelationType } from "@/lib/utils";
+import DeleteOCButton from "./DeleteOCButton";
 
 interface Relation {
   name: string;
@@ -255,6 +256,7 @@ export default function InteractiveStage({
         >
           编辑
         </Link>
+        <DeleteOCButton ocId={ocId} ocName={ocName} />
       </div>
 
       {/* Position controls */}

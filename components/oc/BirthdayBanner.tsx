@@ -43,7 +43,8 @@ export default function BirthdayBanner() {
         const ocs = (data.ocs||[]).filter((oc:any) => oc.birthday === mmdd).map((oc:any) => ({
           id:oc.id, name:oc.name, birthday:oc.birthday, avatarUrl:oc.media?.[0]?.url||null
         }));
-        if (ocs.length > 0) {
+        const todayKey = `bday-dismissed-${mmdd}`;
+        if (ocs.length > 0 && !localStorage.getItem(todayKey)) {
           setBirthdayOCs(ocs);
           setTimeout(() => setShow(true), 500);
         }
@@ -89,7 +90,12 @@ export default function BirthdayBanner() {
           ))}
         </div>
 
-        <button onClick={() => setShow(false)}
+        <button onClick={() => {
+          const today = new Date();
+          const mmdd = `${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+          localStorage.setItem(`bday-dismissed-${mmdd}`, "1");
+          setShow(false);
+        }}
           className="px-6 py-2 bg-pink-500 text-white rounded-full font-medium hover:bg-pink-600 transition-colors shadow-lg"
         >🎉 知道啦！</button>
       </div>
