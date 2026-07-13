@@ -30,16 +30,16 @@ interface Props {
 
 const FLOAT_ICONS = ["✦", "✧", "◇", "◆", "♢", "♤", "♧", "♡"];
 
-// Random positions around the character for speech bubbles
+// Random positions close around the character for speech bubbles
 const BUBBLE_POSITIONS = [
-  { top: "-10%", left: "50%", tx: "-50%", ty: "-100%" },
-  { top: "5%", left: "80%", tx: "0", ty: "-90%" },
-  { top: "40%", left: "90%", tx: "10%", ty: "-50%" },
-  { top: "70%", left: "80%", tx: "10%", ty: "0" },
-  { top: "90%", left: "50%", tx: "-50%", ty: "10%" },
-  { top: "70%", left: "10%", tx: "-110%", ty: "0" },
-  { top: "40%", left: "0%", tx: "-110%", ty: "-50%" },
-  { top: "5%", left: "10%", tx: "-100%", ty: "-90%" },
+  { top: "50%", left: "50%", tx: "-50%", ty: "-120%" },  // above
+  { top: "50%", left: "50%", tx: "-50%", ty: "10%" },    // below
+  { top: "50%", left: "50%", tx: "60%", ty: "-50%" },    // right
+  { top: "50%", left: "50%", tx: "-160%", ty: "-50%" },  // left
+  { top: "50%", left: "50%", tx: "50%", ty: "-90%" },    // top-right
+  { top: "50%", left: "50%", tx: "-150%", ty: "-90%" },  // top-left
+  { top: "50%", left: "50%", tx: "50%", ty: "0" },       // bottom-right
+  { top: "50%", left: "50%", tx: "-150%", ty: "0" },     // bottom-left
 ];
 
 export default function InteractiveStage({
