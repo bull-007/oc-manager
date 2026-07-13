@@ -2,7 +2,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { formatDate, RELATION_TYPES } from "@/lib/utils";
+import { formatDate, RELATION_TYPES, getOCProgress } from "@/lib/utils";
+import ProgressRing from "@/components/ui/ProgressRing";
 import DeleteButton from "./DeleteButton";
 import AddRelation from "./AddRelation";
 import RelationList from "./RelationList";
@@ -66,7 +67,8 @@ export default async function OCDetailPage({
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-2xl bg-amber-100 flex items-center justify-center overflow-hidden border-2 border-warm-border shadow-md">
+          <div className="relative">
+            <div className="w-20 h-20 rounded-2xl bg-amber-100 flex items-center justify-center overflow-hidden border-2 border-warm-border shadow-md">
             {oc.media[0]?.url ? (
               <img
                 src={oc.media[0].url}
@@ -78,6 +80,12 @@ export default async function OCDetailPage({
                 {oc.name.charAt(0)}
               </span>
             )}
+          </div>
+          <ProgressRing
+            percent={getOCProgress(oc).percent}
+            size="md"
+            className="absolute -bottom-2 -right-2"
+          />
           </div>
           <div>
             <h1 className="text-3xl font-serif font-bold text-warm-brown">

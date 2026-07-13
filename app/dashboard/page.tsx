@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { getOCProgress } from "@/lib/utils";
+import ProgressRing from "@/components/ui/ProgressRing";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -116,7 +118,8 @@ export default async function DashboardPage() {
                 href={`/ocs/${oc.id}/panel`}
                 className="bg-warm-paper border border-warm-border rounded-xl p-5 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex items-center gap-4"
               >
-                <div className="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 overflow-hidden border border-warm-border">
+                <div className="relative flex-shrink-0">
+                  <div className="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center overflow-hidden border border-warm-border">
                   {oc.media[0]?.url ? (
                     <img
                       src={oc.media[0].url}
@@ -128,6 +131,12 @@ export default async function DashboardPage() {
                       {oc.name.charAt(0)}
                     </span>
                   )}
+                </div>
+                <ProgressRing
+                  percent={getOCProgress(oc).percent}
+                  size="sm"
+                  className="absolute -bottom-1 -right-1"
+                />
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-medium text-warm-brown truncate">

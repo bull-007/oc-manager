@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import Card from "@/components/ui/Card";
+import ProgressRing from "@/components/ui/ProgressRing";
 import SearchFilter from "@/components/search/SearchFilter";
+import { getOCProgress } from "@/lib/utils";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -99,18 +101,25 @@ export default function OCsPage() {
           <Link key={oc.id} href={`/ocs/${oc.id}/panel`}>
             <Card hover padding="md" className="h-full">
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-warm-border">
-                  {oc.media?.[0]?.url ? (
-                    <img
-                      src={oc.media[0].url}
-                      alt={oc.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-3xl text-amber-600 font-serif">
-                      {oc.name?.charAt(0)}
-                    </span>
-                  )}
+                <div className="relative flex-shrink-0">
+                  <div className="w-16 h-16 rounded-xl bg-amber-100 flex items-center justify-center overflow-hidden border-2 border-warm-border">
+                    {oc.media?.[0]?.url ? (
+                      <img
+                        src={oc.media[0].url}
+                        alt={oc.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-3xl text-amber-600 font-serif">
+                        {oc.name?.charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                  <ProgressRing
+                    percent={getOCProgress(oc).percent}
+                    size="sm"
+                    className="absolute -bottom-1.5 -right-1.5"
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-serif font-bold text-warm-brown text-lg truncate">

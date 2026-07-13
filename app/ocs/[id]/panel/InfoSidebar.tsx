@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { RELATION_TYPES, type RelationType } from "@/lib/utils";
+import { RELATION_TYPES, type RelationType, getOCProgress } from "@/lib/utils";
+import ProgressRing from "@/components/ui/ProgressRing";
 
 interface Relation {
   name: string;
@@ -15,13 +16,17 @@ interface Props {
 }
 
 export default function InfoSidebar({ oc, personality, relations }: Props) {
+  const progress = getOCProgress(oc);
   return (
     <aside className="w-48 h-full flex-shrink-0 border-r border-warm-border/50 bg-warm-paper/50 backdrop-blur-sm overflow-y-auto p-4 space-y-4 text-xs">
       {/* Name & Core Identity */}
       <section>
-        <h1 className="text-lg font-serif font-bold text-warm-brown leading-tight">
-          {oc.name}
-        </h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="text-lg font-serif font-bold text-warm-brown leading-tight">
+            {oc.name}
+          </h1>
+          <ProgressRing percent={progress.percent} size="md" className="flex-shrink-0" />
+        </div>
         <div className="flex flex-wrap gap-1 mt-1.5">
           {oc.species && (
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">
