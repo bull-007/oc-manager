@@ -1,34 +1,40 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import useSWR from "swr";
-import Link from "next/link";
 import * as d3 from "d3";
 import { RELATION_TYPES, type RelationType } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-interface GraphNode {
+interface GraphNode extends d3.SimulationNodeDatum {
   id: string;
   name: string;
   species?: string;
   avatar?: string;
 }
 
-interface GraphLink {
-  source: string;
-  target: string;
+interface GraphLink extends d3.SimulationLinkDatum<GraphNode> {
+  id?: string;
   type: string;
   intimacy: number;
   label: string;
+  relationId?: string;
 }
 
 export default function RelationsPage() {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [activeType, setActiveType] = useState<RelationType | null>(null);
+  const [mode, setMode] = useState<"view" | "connect">("view");
+  const [firstNode, setFirstNode] = useState<string | null>(null);
+  const simRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null);
 
-  const { data, error, isLoading } = useSWR("/api/relations", fetcher);
+  const { data, error, isLoading, mutate } = useSWR("/api/relations", fetcher);
+  const nodesRef = useRef<GraphNode[]>([]);
+  const linksRef = useRef<GraphLink[]>([]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -36,7 +42,7 @@ export default function RelationsPage() {
       if (containerRef.current) {
         setDimensions({
           width: containerRef.current.clientWidth,
-          height: Math.max(600, window.innerHeight - 250),
+          height: Math.max(600, window.innerHeight - 300),
         });
       }
     };
@@ -45,251 +51,272 @@ export default function RelationsPage() {
     return () => window.removeEventListener("resize", resize);
   }, []);
 
+  const createRelation = useCallback(async (fromId: string, toId: string, type: string) => {
+    try {
+      const res = await fetch("/api/relations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fromOcId: fromId, toOcId: toId, type, intimacy: 50 }),
+      });
+      if (res.ok) {
+        toast.success("关系已创建");
+        mutate();
+      } else {
+        const d = await res.json();
+        toast.error(d.error || "创建失败");
+      }
+    } catch { toast.error("创建失败"); }
+  }, [mutate]);
+
+  const deleteRelation = useCallback(async (id: string) => {
+    try {
+      await fetch(`/api/relations/${id}`, { method: "DELETE" });
+      toast.success("关系已删除");
+      mutate();
+    } catch { toast.error("删除失败"); }
+  }, [mutate]);
+
+  // Build and update graph
   useEffect(() => {
     if (!data || !svgRef.current) return;
 
     const { relations, ocs } = data;
     if (ocs.length === 0) return;
 
-    // Prepare graph data
     const nodes: GraphNode[] = ocs.map((oc: any) => ({
-      id: oc.id,
-      name: oc.name,
-      species: oc.species,
-      avatar: oc.media?.[0]?.url,
+      id: oc.id, name: oc.name, species: oc.species, avatar: oc.media?.[0]?.url,
     }));
 
     const links: GraphLink[] = relations.map((r: any) => ({
-      source: r.fromOcId,
-      target: r.toOcId,
-      type: r.type,
+      id: r.id, source: r.fromOcId, target: r.toOcId, type: r.type,
       intimacy: r.intimacy,
       label: RELATION_TYPES[r.type as RelationType]?.label || "其他",
+      relationId: r.id,
     }));
 
-    // Clear previous
+    nodesRef.current = nodes;
+    linksRef.current = links;
+
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
-
     const { width, height } = dimensions;
 
-    const g = svg.append("g");
+    // Gradient defs
+    const defs = svg.append("defs");
+    links.forEach((l) => {
+      const color = RELATION_TYPES[l.type as RelationType]?.color || "#999";
+      const gradId = `grad-${l.id || Math.random()}`;
+      const grad = defs.append("linearGradient").attr("id", gradId);
+      grad.append("stop").attr("offset", "0%").attr("stop-color", color).attr("stop-opacity", 0.6);
+      grad.append("stop").attr("offset", "100%").attr("stop-color", color).attr("stop-opacity", 0.6);
+    });
 
-    // Zoom
+    const g = svg.append("g");
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.3, 3])
-      .on("zoom", (event) => {
-        g.attr("transform", event.transform);
-      });
-
+      .on("zoom", (event) => g.attr("transform", event.transform));
     svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2));
 
-    // Simulation
-    const simulation = d3
-      .forceSimulation(nodes as any)
-      .force(
-        "link",
-        d3
-          .forceLink(links)
-          .id((d: any) => d.id)
-          .distance(150)
-      )
-      .force("charge", d3.forceManyBody().strength(-400))
+    const sim = d3.forceSimulation<GraphNode>(nodes)
+      .force("link", d3.forceLink<GraphNode, GraphLink>(links).id((d: any) => d.id).distance(180))
+      .force("charge", d3.forceManyBody().strength(-500))
       .force("center", d3.forceCenter(0, 0))
-      .force("collision", d3.forceCollide().radius(50));
+      .force("collision", d3.forceCollide().radius(55));
+    simRef.current = sim;
 
-    // Draw links
-    const link = g
-      .append("g")
-      .selectAll("line")
-      .data(links)
-      .join("line")
-      .attr("stroke", (d) => RELATION_TYPES[d.type as RelationType]?.strokeColor || "#999")
-      .attr("stroke-width", (d) => Math.max(1, d.intimacy / 25))
-      .attr("stroke-opacity", 0.6)
-      .attr("stroke-dasharray", (d) =>
-        d.type === "enemy" ? "8,4" : "none"
-      );
+    // Links
+    const linkG = g.append("g");
+    const linkLines = linkG.selectAll("line").data(links).join("line")
+      .attr("stroke", (d) => RELATION_TYPES[d.type as RelationType]?.color || "#999")
+      .attr("stroke-width", (d) => Math.max(2, d.intimacy / 20))
+      .attr("stroke-opacity", 0.5)
+      .attr("stroke-dasharray", (d) => d.type === "enemy" ? "6,3" : "none")
+      .style("cursor", "pointer")
+      .on("click", (event, d) => {
+        event.stopPropagation();
+        if ((d as any).relationId && confirm("删除这条关系？")) {
+          deleteRelation((d as any).relationId);
+        }
+      })
+      .on("mouseenter", function () { d3.select(this).attr("stroke-opacity", 0.9).attr("stroke-width", 4); })
+      .on("mouseleave", function () { d3.select(this).attr("stroke-opacity", 0.5).attr("stroke-width", (d) => Math.max(2, (d as any).intimacy / 20)); });
 
     // Link labels
-    const linkLabels = g
-      .append("g")
-      .selectAll("text")
-      .data(links)
-      .join("text")
+    const linkLabels = g.append("g").selectAll("text").data(links).join("text")
       .text((d) => d.label)
-      .attr("font-size", "11px")
-      .attr("fill", "#8B7E6E")
-      .attr("text-anchor", "middle")
-      .attr("dy", -5);
+      .attr("font-size", "10px").attr("fill", "#8B7E6E").attr("text-anchor", "middle")
+      .attr("dy", -6).style("pointer-events", "none");
 
-    // Draw nodes
-    const node = g
-      .append("g")
-      .selectAll("g")
-      .data(nodes)
-      .join("g")
-      .style("cursor", "pointer")
-      .on("click", (_event, d) => {
+    // Node groups
+    const nodeG = g.append("g").selectAll("g").data(nodes).join("g")
+      .style("cursor", "pointer");
+
+    // Shadow
+    nodeG.append("circle").attr("r", 32).attr("fill", "none")
+      .attr("stroke", "#D4C8B8").attr("stroke-width", 6).attr("opacity", 0.3);
+
+    // Main circle
+    nodeG.append("circle").attr("r", 30)
+      .attr("fill", "#FFFBF0").attr("stroke", "#D4C8B8").attr("stroke-width", 2.5);
+
+    // Initial/Avatar
+    nodeG.each(function (d) {
+      const g = d3.select(this);
+      if (d.avatar) {
+        // Image clip
+        g.append("clipPath").attr("id", `clip-${d.id}`)
+          .append("circle").attr("r", 28);
+        g.append("image").attr("xlink:href", d.avatar).attr("x", -28).attr("y", -28)
+          .attr("width", 56).attr("height", 56).attr("clip-path", `url(#clip-${d.id})`);
+      } else {
+        g.append("text").text(d.name.charAt(0))
+          .attr("text-anchor", "middle").attr("dy", "0.35em")
+          .attr("font-size", "22px").attr("font-weight", "bold")
+          .attr("fill", "#B5443C").attr("font-family", "serif");
+      }
+    });
+
+    // Labels
+    nodeG.append("text").text((d) => d.name)
+      .attr("text-anchor", "middle").attr("dy", 42)
+      .attr("font-size", "12px").attr("fill", "#3D2B1F").attr("font-weight", "500");
+
+    nodeG.append("title").text((d) => `${d.name}${d.species ? ` (${d.species})` : ""}`);
+
+    // Click handler for connection mode
+    nodeG.on("click", (event, d) => {
+      event.stopPropagation();
+      if (mode === "connect" && activeType) {
+        if (!firstNode) {
+          setFirstNode(d.id);
+          nodeG.filter((n) => n.id === d.id)
+            .select("circle:nth-child(2)")
+            .attr("stroke", RELATION_TYPES[activeType].color)
+            .attr("stroke-width", 4)
+            .attr("filter", "drop-shadow(0 0 6px " + RELATION_TYPES[activeType].color + ")");
+        } else if (d.id !== firstNode) {
+          createRelation(firstNode, d.id, activeType);
+          setFirstNode(null);
+          setMode("view");
+          setActiveType(null);
+        }
+      } else {
         window.location.href = `/ocs/${d.id}/panel`;
-      });
-
-    // Node circles
-    node
-      .append("circle")
-      .attr("r", 30)
-      .attr("fill", "#FFFBF0")
-      .attr("stroke", "#D4C8B8")
-      .attr("stroke-width", 2)
-      .attr("filter", "drop-shadow(0 2px 4px rgba(61,43,31,0.15))");
-
-    // Node emoji or initial
-    node
-      .append("text")
-      .text((d) => d.name.charAt(0))
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em")
-      .attr("font-size", "18px")
-      .attr("font-weight", "bold")
-      .attr("fill", "#B5443C")
-      .attr("font-family", "serif");
-
-    // Node labels
-    node
-      .append("text")
-      .text((d) => d.name)
-      .attr("text-anchor", "middle")
-      .attr("dy", 42)
-      .attr("font-size", "12px")
-      .attr("fill", "#3D2B1F")
-      .attr("font-weight", "500");
-
-    // Tooltips
-    node.append("title").text(
-      (d) => `${d.name}${d.species ? ` (${d.species})` : ""}`
-    );
-
-    // Simulation tick
-    simulation.on("tick", () => {
-      link
-        .attr("x1", (d: any) => d.source.x)
-        .attr("y1", (d: any) => d.source.y)
-        .attr("x2", (d: any) => d.target.x)
-        .attr("y2", (d: any) => d.target.y);
-
-      linkLabels
-        .attr("x", (d: any) => (d.source.x + d.target.x) / 2)
-        .attr("y", (d: any) => (d.source.y + d.target.y) / 2);
-
-      node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+      }
     });
 
     // Drag
-    const drag = d3
-      .drag<SVGGElement, any>()
-      .on("start", (event, d: any) => {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
+    const drag = d3.drag<SVGGElement, GraphNode>()
+      .on("start", (event, d) => {
+        if (!event.active) sim.alphaTarget(0.3).restart();
+        d.fx = d.x; d.fy = d.y;
       })
-      .on("drag", (event, d: any) => {
-        d.fx = event.x;
-        d.fy = event.y;
-      })
-      .on("end", (event, d: any) => {
-        if (!event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
+      .on("drag", (event, d) => { d.fx = event.x; d.fy = event.y; })
+      .on("end", (event, d) => {
+        if (!event.active) sim.alphaTarget(0);
+        d.fx = null; d.fy = null;
       });
+    nodeG.call(drag as any);
 
-    node.call(drag as any);
+    // Tick
+    sim.on("tick", () => {
+      linkLines.attr("x1", (d: any) => d.source.x).attr("y1", (d: any) => d.source.y)
+        .attr("x2", (d: any) => d.target.x).attr("y2", (d: any) => d.target.y);
+      linkLabels.attr("x", (d: any) => (d.source.x + d.target.x) / 2)
+        .attr("y", (d: any) => (d.source.y + d.target.y) / 2);
+      nodeG.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+    });
 
-    return () => {
-      simulation.stop();
-    };
-  }, [data, dimensions]);
+    // Click background to cancel
+    svg.on("click", () => {
+      if (firstNode) { setFirstNode(null); setMode("view"); setActiveType(null); }
+    });
+
+    return () => { sim.stop(); };
+  }, [data, dimensions, mode, activeType, firstNode, createRelation, deleteRelation]);
+
+  const startConnect = (type: RelationType) => {
+    setMode("connect");
+    setActiveType(type);
+    setFirstNode(null);
+    toast(`点击两个角色来创建${RELATION_TYPES[type].label}关系`, { icon: "🔗" });
+  };
+
+  const cancelConnect = () => {
+    setMode("view");
+    setActiveType(null);
+    setFirstNode(null);
+  };
+
+  const { data: d } = (data || { ocs: [], relations: [] });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 animate-slide-up">
+    <div className="max-w-7xl mx-auto space-y-4 animate-slide-up">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-warm-brown">
-            关系图谱
-          </h1>
+          <h1 className="text-2xl font-serif font-bold text-warm-brown">关系图谱</h1>
           <p className="text-warm-muted text-sm mt-1">
-            可视化人物关系网 · 拖拽节点调整位置 · 点击查看详情
+            {mode === "connect" ? `正在连接 — 点击两个角色` : "拖拽节点 · 点击查看 · 点击连线删除"}
           </p>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 p-4 bg-warm-paper border border-warm-border rounded-xl">
-        {(Object.keys(RELATION_TYPES) as RelationType[]).map((key) => (
-          <div key={key} className="flex items-center gap-2 text-sm">
-            <span
-              className="w-4 h-4 rounded-full border-2"
-              style={{
-                backgroundColor: RELATION_TYPES[key].color,
-                borderColor: RELATION_TYPES[key].strokeColor,
-              }}
-            />
-            {RELATION_TYPES[key].label}
-          </div>
-        ))}
-        <div className="flex items-center gap-2 text-sm text-warm-muted">
-          <span className="w-4 h-0 border border-dashed border-red-400" />
-          仇敌（虚线）
-        </div>
-        <div className="flex items-center gap-2 text-sm text-warm-muted">
-          <span className="w-4 h-0.5 bg-warm-border" />
-          线条粗细 = 亲密度
+      {/* Relation type chips */}
+      <div className="bg-warm-paper border border-warm-border rounded-xl p-4">
+        <p className="text-xs text-warm-muted mb-3">
+          {mode === "connect" ? "选择目标角色完成连接" : "点击下方关系类型，再依次点击两个角色即可连线"}
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          {(Object.keys(RELATION_TYPES) as RelationType[]).map((key) => (
+            <button
+              key={key}
+              onClick={() => startConnect(key)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                activeType === key
+                  ? "scale-110 shadow-lg text-white"
+                  : "text-white hover:scale-105 hover:shadow-md"
+              }`}
+              style={{ backgroundColor: RELATION_TYPES[key].color }}
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-white/40" />
+              {RELATION_TYPES[key].label}
+            </button>
+          ))}
+          {mode === "connect" && (
+            <button onClick={cancelConnect}
+              className="px-4 py-2 rounded-full text-sm text-warm-muted border border-warm-border hover:bg-warm-cream transition-colors">
+              取消
+            </button>
+          )}
         </div>
       </div>
 
-      {isLoading && (
-        <div className="text-center py-12">
-          <p className="text-warm-muted">加载中...</p>
-        </div>
-      )}
+      {/* Stats */}
+      <div className="flex flex-wrap gap-3 text-xs text-warm-muted">
+        {(data as any)?.ocs?.length > 0 && (
+          <>
+            <span>◆ {(data as any).ocs.length} 个角色</span>
+            <span>🔗 {(data as any).relations.length} 条关系</span>
+          </>
+        )}
+      </div>
 
-      {!isLoading && (!data || data.ocs?.length === 0) && (
+      {isLoading && <p className="text-center py-12 text-warm-muted">加载中...</p>}
+
+      {!isLoading && ((data as any)?.ocs?.length || 0) === 0 && (
         <div className="bg-warm-paper border border-warm-border border-dashed rounded-xl p-12 text-center">
           <div className="text-5xl mb-3">⬡</div>
           <p className="text-warm-muted mb-4">还没有创建任何 OC</p>
-          <Link
-            href="/ocs/new"
-            className="text-amber-700 hover:text-amber-800 font-medium"
-          >
-            创建第一个 OC →
-          </Link>
-        </div>
-      )}
-
-      {!isLoading && data?.ocs?.length > 0 && data?.relations?.length === 0 && (
-        <div className="bg-warm-paper border border-warm-border border-dashed rounded-xl p-12 text-center">
-          <div className="text-5xl mb-3">⬡</div>
-          <p className="text-warm-muted mb-4">还没有建立任何关系</p>
-          <Link
-            href="/ocs"
-            className="text-amber-700 hover:text-amber-800 font-medium"
-          >
-            前往 OC 详情页添加关系 →
-          </Link>
         </div>
       )}
 
       {/* Graph */}
-      <div
-        ref={containerRef}
-        className="bg-warm-paper border border-warm-border rounded-xl overflow-hidden"
-      >
-        <svg
-          ref={svgRef}
-          width={dimensions.width}
-          height={dimensions.height}
-          className="w-full"
-        />
+      <div ref={containerRef}
+        className={`bg-warm-paper border rounded-xl overflow-hidden transition-colors ${
+          mode === "connect" ? "border-amber-300 shadow-lg shadow-amber-100" : "border-warm-border"
+        }`}>
+        <svg ref={svgRef} width={dimensions.width} height={dimensions.height} className="w-full" />
       </div>
     </div>
   );
