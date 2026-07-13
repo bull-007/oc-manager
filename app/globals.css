@@ -118,3 +118,27 @@ body {
   33% { transform: translateY(-8px) rotate(3deg); }
   66% { transform: translateY(4px) rotate(-3deg); }
 }
+
+/* Pop bounce - subtle click feedback */
+@keyframes pop-bounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.06); }
+  70% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+/* Sparkle particles fly out */
+@keyframes sparkle-out {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--sx, 10px), var(--sy, -20px)) scale(0); }
+}
+
+.animate-sparkle-out {
+  --sx: 0px;
+  --sy: 0px;
+  animation: sparkle-out 0.6s ease-out forwards;
+}
+.animate-sparkle-out:nth-child(1) { --sx: -12px; --sy: -18px; }
+.animate-sparkle-out:nth-child(2) { --sx: 14px; --sy: -22px; }
+.animate-sparkle-out:nth-child(3) { --sx: -8px; --sy: -15px; }
+.animate-sparkle-out:nth-child(4) { --sx: 16px; --sy: -20px; }
