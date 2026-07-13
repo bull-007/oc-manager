@@ -24,7 +24,7 @@ export default async function DashboardPage() {
         orderBy: { updatedAt: "desc" },
         take: 5,
         include: {
-          media: { take: 1, where: { category: "avatar" } },
+          media: { take: 1, orderBy: { createdAt: "asc" } },
           world: { select: { id: true, name: true } },
         },
       }),

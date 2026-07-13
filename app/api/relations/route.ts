@@ -46,7 +46,7 @@ export async function GET(req: Request) {
       occupation: true,
       media: {
         take: 1,
-        where: { category: "avatar" },
+        orderBy: { createdAt: "asc" },
         select: { url: true },
       },
     },

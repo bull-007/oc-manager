@@ -67,9 +67,9 @@ export default async function OCDetailPage({
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 rounded-2xl bg-amber-100 flex items-center justify-center overflow-hidden border-2 border-warm-border shadow-md">
-            {oc.media.find((m) => m.category === "avatar")?.url ? (
+            {oc.media[0]?.url ? (
               <img
-                src={oc.media.find((m) => m.category === "avatar")!.url}
+                src={oc.media[0].url}
                 alt={oc.name}
                 className="w-full h-full object-cover"
               />

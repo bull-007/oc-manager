@@ -47,7 +47,7 @@ export async function GET(req: Request) {
   const ocs = await prisma.oC.findMany({
     where,
     include: {
-      media: { take: 1, where: { category: "avatar" } },
+      media: { take: 1, orderBy: { createdAt: "asc" } },
       ocTags: { include: { tag: true } },
       world: { select: { id: true, name: true } },
     },
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
   }
 
   const data = await req.json();
-  const { tags, ...ocData } = data;
+  const { tags, imageUrls, ...ocData } = data;
 
   const oc = await prisma.oC.create({
     data: {
@@ -82,6 +82,33 @@ export async function POST(req: Request) {
       ocTags: { include: { tag: true } },
     },
   });
+
+  // Associate uploaded images with this OC
+  if (imageUrls?.length) {
+    // Link existing unlinked media records
+    await prisma.media.updateMany({
+      where: { url: { in: imageUrls }, ocId: null },
+      data: { ocId: oc.id },
+    });
+    // Create new media records for any URLs not already in the database
+    const existingUrls = (
+      await prisma.media.findMany({
+        where: { ocId: oc.id },
+        select: { url: true },
+      })
+    ).map((m) => m.url);
+    const newUrls = imageUrls.filter((u: string) => !existingUrls.includes(u));
+    if (newUrls.length) {
+      await prisma.media.createMany({
+        data: newUrls.map((url: string, i: number) => ({
+          url,
+          type: "image",
+          category: "gallery",
+          ocId: oc.id,
+        })),
+      });
+    }
+  }
 
   return NextResponse.json({ oc }, { status: 201 });
 }

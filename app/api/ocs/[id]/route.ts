@@ -68,7 +68,7 @@ export async function PUT(
   }
 
   const data = await req.json();
-  const { tags, ...ocData } = data;
+  const { tags, imageUrls, ...ocData } = data;
 
   // Update tags
   if (tags !== undefined) {
@@ -80,6 +80,40 @@ export async function PUT(
           tagId,
         })),
       });
+    }
+  }
+
+  // Update images
+  if (imageUrls !== undefined) {
+    // Unlink old images
+    await prisma.media.updateMany({
+      where: { ocId: id },
+      data: { ocId: null },
+    });
+    // Link new images
+    if (imageUrls.length) {
+      await prisma.media.updateMany({
+        where: { url: { in: imageUrls } },
+        data: { ocId: id },
+      });
+      // Create any that don't exist
+      const existingUrls = (
+        await prisma.media.findMany({
+          where: { ocId: id },
+          select: { url: true },
+        })
+      ).map((m) => m.url);
+      const newUrls = imageUrls.filter((u: string) => !existingUrls.includes(u));
+      if (newUrls.length) {
+        await prisma.media.createMany({
+          data: newUrls.map((url: string) => ({
+            url,
+            type: "image",
+            category: "gallery",
+            ocId: id,
+          })),
+        });
+      }
     }
   }
 

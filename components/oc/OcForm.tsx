@@ -182,6 +182,7 @@ export default function OcForm({ initialData, isEditing }: Props) {
       status: form.status,
       worldId: form.worldId || null,
       tags: form.tags,
+      imageUrls: form.images,
     };
 
     try {
