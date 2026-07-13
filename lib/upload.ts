@@ -14,8 +14,7 @@ function urlsafeBase64(str: string): string {
   return Buffer.from(str)
     .toString("base64")
     .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+    .replace(/\//g, "_");
 }
 
 function getUploadToken(): string {
@@ -30,8 +29,7 @@ function getUploadToken(): string {
   hmac.update(encodedPutPolicy);
   const sign = hmac.digest("base64")
     .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+    .replace(/\//g, "_");
 
   return `${QINIU_ACCESS_KEY}:${sign}:${encodedPutPolicy}`;
 }
