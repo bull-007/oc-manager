@@ -119,7 +119,7 @@ export default function InteractiveStage({
   return (
     <div
       ref={stageRef}
-      className="flex-1 flex flex-col items-center justify-center relative overflow-hidden"
+      className="flex-1 flex flex-col items-center justify-center relative"
       onMouseEnter={() => setShowToolbar(true)}
       onMouseLeave={() => setShowToolbar(false)}
     >
@@ -163,18 +163,22 @@ export default function InteractiveStage({
 
       {/* Center stage */}
       <div className="relative z-10 flex flex-col items-center">
-        {/* Speech bubble - oval pill, positioned randomly */}
+        {/* Speech bubble - oval pill, no arrow */}
         <div
           className={`absolute z-20 transition-all duration-300 pointer-events-none ${
             showSpeech && speech ? "opacity-100 scale-100" : "opacity-0 scale-95"
           }`}
-          style={{ ...bubblePos, transform: `translate(${bubblePos.tx}, ${bubblePos.ty})` }}
+          style={{
+            ...bubblePos,
+            transform: `translate(${bubblePos.tx}, ${bubblePos.ty})`,
+            width: "max-content",
+            maxWidth: "260px",
+          }}
         >
-          <div className="bg-warm-paper/95 backdrop-blur-sm border border-amber-200 rounded-full px-5 py-2.5 max-w-[260px] shadow-lg relative">
-            <p className="text-[12px] text-warm-brown leading-relaxed whitespace-normal break-words">
+          <div className="bg-warm-paper/95 backdrop-blur-sm border border-amber-200 rounded-full px-5 py-2.5 shadow-lg">
+            <p className="text-[13px] text-warm-brown leading-relaxed" style={{ whiteSpace: "normal" }}>
               {speech || " "}
             </p>
-            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-warm-paper/95 border-r border-b border-amber-200 rotate-45" />
           </div>
         </div>
 

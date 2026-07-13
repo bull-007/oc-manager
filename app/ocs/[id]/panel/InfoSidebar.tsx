@@ -16,7 +16,7 @@ interface Props {
 
 export default function InfoSidebar({ oc, personality, relations }: Props) {
   return (
-    <aside className="w-48 flex-shrink-0 border-r border-warm-border/50 bg-warm-paper/50 backdrop-blur-sm overflow-y-auto p-4 space-y-4 text-xs">
+    <aside className="w-48 h-full flex-shrink-0 border-r border-warm-border/50 bg-warm-paper/50 backdrop-blur-sm overflow-y-auto p-4 space-y-4 text-xs">
       {/* Name & Core Identity */}
       <section>
         <h1 className="text-lg font-serif font-bold text-warm-brown leading-tight">
