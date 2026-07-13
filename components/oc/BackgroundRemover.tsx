@@ -156,11 +156,17 @@ export default function BackgroundRemover({ imageUrl, onCutoutComplete, onClose 
 
   const handleApply = async () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    let sourceUrl = preview;
+
+    // If in manual mode, use canvas; otherwise use auto preview
+    if (mode === "manual" && canvas) {
+      sourceUrl = canvas.toDataURL("image/png");
+    }
+
+    if (!sourceUrl) return;
     setProcessing(true);
     try {
-      const dataUrl = canvas.toDataURL("image/png");
-      const res = await fetch(dataUrl);
+      const res = await fetch(sourceUrl);
       const blob = await res.blob();
       const formData = new FormData();
       formData.append("file", blob, "cutout.png");
@@ -169,6 +175,7 @@ export default function BackgroundRemover({ imageUrl, onCutoutComplete, onClose 
       const data = await uploadRes.json();
       onCutoutComplete(data.url);
       toast.success("抠图完成！");
+      onClose();
     } catch { toast.error("上传失败"); }
     setProcessing(false);
   };
