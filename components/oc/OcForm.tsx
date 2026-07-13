@@ -8,6 +8,7 @@ import ImageUpload from "@/components/ui/ImageUpload";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import BackgroundRemover from "./BackgroundRemover";
+import QuoteEditor from "./QuoteEditor";
 
 const PERSONALITY_SUGGESTIONS = [
   "开朗", "内向", "温柔", "冷酷", "热血", "腹黑", "天然呆",
@@ -48,7 +49,7 @@ interface OcFormData {
   dislikes: string;
   habits: string;
   belongings: string;
-  quotes: string;
+  quotes: string[];
   themeSong: string;
   status: string;
   worldId: string;
@@ -68,7 +69,7 @@ const emptyForm: OcFormData = {
   background: "", secrets: "", abilities: "", fightingStyle: "",
   weapons: "", skills: "", abilityWeaknesses: "",
   likes: "", dislikes: "", habits: "", belongings: "",
-  quotes: "", themeSong: "", status: "draft", worldId: "",
+  quotes: [], themeSong: "", status: "draft", worldId: "",
   tags: [], images: [],
   cutoutUrl: "", cutoutPosX: 50, cutoutPosY: 50,
 };
@@ -126,7 +127,7 @@ export default function OcForm({ initialData, isEditing }: Props) {
         dislikes: initialData.dislikes || "",
         habits: initialData.habits || "",
         belongings: initialData.belongings || "",
-        quotes: initialData.quotes || "",
+        quotes: JSON.parse(initialData.quotes || "[]") || [],
         themeSong: initialData.themeSong || "",
         status: initialData.status || "draft",
         worldId: initialData.worldId || "",
@@ -185,9 +186,7 @@ export default function OcForm({ initialData, isEditing }: Props) {
       dislikes: form.dislikes || null,
       habits: form.habits || null,
       belongings: form.belongings || null,
-      quotes: JSON.stringify(
-        form.quotes ? form.quotes.split("\n").filter(Boolean) : []
-      ),
+      quotes: JSON.stringify(form.quotes || []),
       themeSong: form.themeSong || null,
       status: form.status,
       worldId: form.worldId || null,
@@ -599,8 +598,11 @@ export default function OcForm({ initialData, isEditing }: Props) {
               <input type="text" value={form.belongings} onChange={(e) => update("belongings", e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>经典语录（每行一句）</label>
-              <textarea value={form.quotes} onChange={(e) => update("quotes", e.target.value)} className={textareaClass} rows={4} placeholder="每行一句经典语录..." />
+              <label className={labelClass}>经典语录</label>
+              <QuoteEditor
+                quotes={form.quotes}
+                onChange={(q) => update("quotes", q)}
+              />
             </div>
             <div>
               <label className={labelClass}>主题曲</label>

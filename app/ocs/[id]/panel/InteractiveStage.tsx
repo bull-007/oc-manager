@@ -44,9 +44,11 @@ export default function InteractiveStage({
 }: Props) {
   const [speech, setSpeech] = useState("");
   const [showSpeech, setShowSpeech] = useState(false);
-  const [speechIndex, setSpeechIndex] = useState(0);
   const [popping, setPopping] = useState(false);
   const [sparkles, setSparkles] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [editPosition, setEditPosition] = useState(false);
+  const [posX, setPosX] = useState(cutoutPosX);
+  const [posY, setPosY] = useState(cutoutPosY);
   const avatarRef = useRef<HTMLDivElement>(null);
 
   const [floatElements] = useState(() =>
@@ -82,21 +84,21 @@ export default function InteractiveStage({
         }, 600);
       }
 
-      // Cycle quotes
+      // Random quote
       if (quotes.length === 0) return;
-      const nextIndex = (speechIndex + 1) % quotes.length;
-      setSpeechIndex(nextIndex);
-      setSpeech(quotes[nextIndex]);
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      setSpeech(quotes[randomIndex]);
       setShowSpeech(true);
       setTimeout(() => setShowSpeech(false), 3500);
     },
-    [quotes, speechIndex]
+    [quotes]
   );
 
-  // First-load greeting
+  // First-load random greeting
   useEffect(() => {
     if (quotes.length > 0) {
-      setSpeech(quotes[0]);
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      setSpeech(quotes[randomIndex]);
       setShowSpeech(true);
       setTimeout(() => setShowSpeech(false), 3500);
     }
@@ -223,7 +225,7 @@ export default function InteractiveStage({
                 alt={ocName}
                 className="w-full h-full object-contain"
                 style={{
-                  objectPosition: `${cutoutPosX}% ${cutoutPosY}%`,
+                  objectPosition: `${posX}% ${posY}%`,
                 }}
                 draggable={false}
               />
@@ -259,22 +261,79 @@ export default function InteractiveStage({
       </div>
 
       {/* Bottom hint */}
-      {quotes.length > 0 && (
+      {quotes.length > 0 && !editPosition && (
         <p className="absolute bottom-4 text-[11px] text-warm-muted/40">
           点击角色互动
         </p>
       )}
 
-      {/* Edit button */}
-      <Link
-        href={`/ocs/${ocId}/edit`}
-        className="absolute top-4 right-4 z-20 w-7 h-7 flex items-center justify-center rounded-full bg-warm-paper/50 backdrop-blur-sm border border-warm-border/30 text-warm-muted/40 hover:text-warm-brown hover:bg-warm-paper hover:border-warm-border transition-all"
-        title="编辑"
-      >
-        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-        </svg>
-      </Link>
+      {/* Position edit bar */}
+      {cutoutUrl && (
+        <div className="absolute bottom-4 left-4 right-4 z-30">
+          {editPosition ? (
+            <div className="bg-warm-paper/95 backdrop-blur-sm border border-amber-200 rounded-xl p-3 space-y-2 shadow-lg animate-slide-up">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-warm-brown">位置微调</span>
+                <div className="flex gap-1">
+                  <button
+                    onClick={async () => {
+                      // Save position
+                      await fetch(`/api/ocs/${ocId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ cutoutPosX: posX, cutoutPosY: posY }),
+                      });
+                      setEditPosition(false);
+                    }}
+                    className="text-xs px-2 py-0.5 bg-amber-700 text-white rounded"
+                  >
+                    保存
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPosX(cutoutPosX);
+                      setPosY(cutoutPosY);
+                      setEditPosition(false);
+                    }}
+                    className="text-xs px-2 py-0.5 text-warm-muted border border-warm-border rounded"
+                  >
+                    取消
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <div className="flex justify-between text-[10px] text-warm-muted mb-0.5">
+                    <span>水平</span><span>{posX}%</span>
+                  </div>
+                  <input type="range" min="0" max="100" value={posX} onChange={(e) => setPosX(Number(e.target.value))} className="w-full accent-amber-600 h-1" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-[10px] text-warm-muted mb-0.5">
+                    <span>垂直</span><span>{posY}%</span>
+                  </div>
+                  <input type="range" min="0" max="100" value={posY} onChange={(e) => setPosY(Number(e.target.value))} className="w-full accent-amber-600 h-1" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={() => setEditPosition(true)}
+                className="text-[11px] px-2.5 py-1 bg-warm-paper/80 backdrop-blur-sm border border-warm-border/50 rounded-full text-warm-muted/60 hover:text-warm-brown hover:border-warm-border transition-all"
+              >
+                调节位置
+              </button>
+              <Link
+                href={`/ocs/${ocId}/edit`}
+                className="text-[11px] px-2.5 py-1 bg-warm-paper/80 backdrop-blur-sm border border-warm-border/50 rounded-full text-warm-muted/60 hover:text-warm-brown hover:border-warm-border transition-all"
+              >
+                编辑 OC
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
