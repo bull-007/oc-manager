@@ -111,3 +111,10 @@ body {
   font-weight: 600;
   margin: 0.75rem 0 0.5rem;
 }
+
+/* Floating animation for interactive panel */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(3deg); }
+  66% { transform: translateY(4px) rotate(-3deg); }
+}
