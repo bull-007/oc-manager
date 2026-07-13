@@ -142,3 +142,9 @@ body {
 .animate-sparkle-out:nth-child(2) { --sx: 14px; --sy: -22px; }
 .animate-sparkle-out:nth-child(3) { --sx: -8px; --sy: -15px; }
 .animate-sparkle-out:nth-child(4) { --sx: 16px; --sy: -20px; }
+
+/* Confetti fall for birthday */
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
