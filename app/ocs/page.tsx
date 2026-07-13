@@ -106,46 +106,55 @@ export default function OCsPage() {
   };
 
   return (
-    <div className="flex gap-6 h-[calc(100vh-6rem)] animate-slide-up">
+    <div className="flex gap-6 animate-slide-up">
       {/* Category Sidebar */}
-      <div className="w-44 flex-shrink-0 overflow-y-auto space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-warm-brown">分类</h3>
-          <button onClick={() => setShowNewCat(!showNewCat)} className="text-xs text-amber-700 hover:text-amber-800">+ 新建</button>
+      <div className="w-40 flex-shrink-0 space-y-1.5 sticky top-0 self-start">
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-sm font-serif font-bold text-warm-brown">📁 分类</h3>
+          <button onClick={() => setShowNewCat(!showNewCat)}
+            className="text-[11px] px-2 py-0.5 rounded-full border border-warm-border text-warm-muted hover:text-amber-700 hover:border-amber-300 transition-colors">
+            {showNewCat ? "收起" : "+ 新建"}
+          </button>
         </div>
 
         {showNewCat && (
-          <div className="flex gap-1">
+          <div className="flex gap-1.5 mb-2 animate-slide-up">
             <input value={newCatName} onChange={(e) => setNewCatName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && createCategory()}
-              placeholder="分类名..." className="flex-1 px-2 py-1 text-xs border border-warm-border rounded bg-warm-cream focus:outline-none focus:ring-1 focus:ring-amber-400" autoFocus />
-            <button onClick={createCategory} className="text-xs px-2 py-1 bg-amber-700 text-white rounded">确定</button>
+              placeholder="输入名称..." className="flex-1 px-2.5 py-1.5 text-xs border border-warm-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-300" autoFocus />
+            <button onClick={createCategory} className="text-xs px-3 py-1.5 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors">确定</button>
           </div>
         )}
 
-        <button onClick={() => setCatFilter("")}
-          className={`w-full text-left text-xs px-3 py-1.5 rounded-lg transition-colors ${!catFilter ? "bg-amber-100 text-amber-800 font-medium" : "text-warm-muted hover:bg-warm-cream"}`}>
-          📁 全部 ({ocs.length})
-        </button>
+        <div className="bg-warm-paper border border-warm-border rounded-xl p-1.5 space-y-0.5">
+          <button onClick={() => setCatFilter("")}
+            className={`w-full text-left text-xs px-3 py-2 rounded-lg transition-all ${
+              !catFilter ? "bg-amber-100 text-amber-800 font-medium shadow-sm" : "text-warm-muted hover:bg-warm-cream"
+            }`}>
+            📁 全部 ({ocs.length})
+          </button>
 
-        {categories.map((cat: any) => (
-          <div key={cat.id} className="group flex items-center">
-            <button onClick={() => setCatFilter(cat.id)}
-              className={`flex-1 text-left text-xs px-3 py-1.5 rounded-lg transition-colors ${catFilter === cat.id ? "bg-amber-100 text-amber-800 font-medium" : "text-warm-muted hover:bg-warm-cream"}`}>
-              📁 {cat.name} ({cat._count?.ocs||0})
-            </button>
-            <button onClick={() => deleteCategory(cat.id)}
-              className="text-warm-muted/30 hover:text-red-500 opacity-0 group-hover:opacity-100 text-xs px-1 transition-all">✕</button>
-          </div>
-        ))}
+          {categories.map((cat: any) => (
+            <div key={cat.id} className="group flex items-center">
+              <button onClick={() => setCatFilter(cat.id)}
+                className={`flex-1 text-left text-xs px-3 py-2 rounded-lg transition-all ${
+                  catFilter === cat.id ? "bg-amber-100 text-amber-800 font-medium shadow-sm" : "text-warm-muted hover:bg-warm-cream"
+                }`}>
+                📁 {cat.name} <span className="text-warm-muted/50">({cat._count?.ocs||0})</span>
+              </button>
+              <button onClick={() => deleteCategory(cat.id)}
+                className="text-warm-muted/20 hover:text-red-400 opacity-0 group-hover:opacity-100 text-xs px-1.5 py-1 transition-all">✕</button>
+            </div>
+          ))}
 
-        {categories.length === 0 && !showNewCat && (
-          <p className="text-xs text-warm-muted/50 px-3">暂无分类</p>
-        )}
+          {categories.length === 0 && !showNewCat && (
+            <p className="text-xs text-warm-muted/40 px-3 py-2 text-center">暂无分类</p>
+          )}
+        </div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 space-y-4 overflow-y-auto">
+      <div className="flex-1 min-w-0 space-y-4 pb-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-serif font-bold text-warm-brown">OC 档案</h1>
@@ -156,7 +165,9 @@ export default function OCsPage() {
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => { setBatchMode(!batchMode); setSelected(new Set()); }}
-              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${batchMode ? "bg-amber-100 border-amber-300 text-amber-800" : "border-warm-border text-warm-muted hover:bg-warm-paper"}`}>
+              className={`text-sm px-4 py-2 rounded-lg border transition-all ${
+                batchMode ? "bg-amber-100 border-amber-300 text-amber-800 shadow-sm" : "border-warm-border text-warm-muted hover:bg-warm-paper hover:text-warm-brown"
+              }`}>
               {batchMode ? "退出批量" : "批量管理"}
             </button>
             <Link href="/ocs/new"
