@@ -89,6 +89,13 @@ export default function BackgroundRemover({ imageUrl, onCutoutComplete, onClose 
     loadToCanvas(url);
   };
 
+  // Reload canvas when switching to manual mode
+  useEffect(() => {
+    if (mode === "manual" && preview) {
+      setTimeout(() => loadToCanvas(preview), 100);
+    }
+  }, [mode]);
+
   const getCanvasPos = (e: React.MouseEvent | React.TouchEvent): { x: number; y: number } | null => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
@@ -184,92 +191,83 @@ export default function BackgroundRemover({ imageUrl, onCutoutComplete, onClose 
         >手动修图</button>
       </div>
 
-      {mode === "auto" ? (
-        <>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <p className="text-xs text-warm-muted mb-1">原图</p>
-              <div className="aspect-square rounded-lg overflow-hidden border border-warm-border bg-gray-100">
-                <img src={imageUrl} alt="原始" className="w-full h-full object-contain" />
-              </div>
-            </div>
-            <div className="flex-1">
-              <p className="text-xs text-warm-muted mb-1">结果预览</p>
-              <div className="aspect-square rounded-lg overflow-hidden border border-warm-border bg-[repeating-conic-gradient(#ddd_0%_25%,#fff_0%_50%)_50%/12px_12px]">
-                {preview ? (
-                  <img src={preview} alt="结果" className="w-full h-full object-contain" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center"><p className="text-xs text-warm-muted">处理中...</p></div>
-                )}
-              </div>
-            </div>
+      {/* Always visible result preview + manual canvas */}
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <p className="text-xs text-warm-muted mb-1">原图</p>
+          <div className="aspect-square rounded-lg overflow-hidden border border-warm-border bg-gray-100">
+            <img src={imageUrl} alt="原始" className="w-full h-full object-contain" />
           </div>
+        </div>
+        <div className="flex-1">
+          <p className="text-xs text-warm-muted mb-1">
+            {mode === "manual" ? `手动修图 ${isDrawing ? "●" : ""}` : "结果预览"}
+          </p>
+          <div className={`aspect-square rounded-lg overflow-hidden border bg-[repeating-conic-gradient(#ddd_0%_25%,#fff_0%_50%)_50%/12px_12px] ${
+            mode === "manual" ? "border-amber-300" : "border-warm-border"
+          }`}>
+            {/* Canvas always mounted for manual mode */}
+            <canvas
+              ref={canvasRef}
+              className={`w-full h-full object-contain cursor-crosshair ${mode === "auto" ? "hidden" : ""}`}
+              onMouseDown={startDraw}
+              onMouseMove={moveDraw}
+              onMouseUp={stopDraw}
+              onMouseLeave={stopDraw}
+              onTouchStart={startDraw}
+              onTouchMove={moveDraw}
+              onTouchEnd={stopDraw}
+            />
+            {/* Preview image for auto mode */}
+            {mode === "auto" && (
+              preview ? (
+                <img src={preview} alt="结果" className="w-full h-full object-contain" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <p className="text-xs text-warm-muted">处理中...</p>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs text-warm-muted">容差：{tolerance}</label>
-              <button onClick={handleReprocess} className="text-xs text-amber-700 hover:text-amber-800">重新处理</button>
-            </div>
-            <input type="range" min="10" max="120" value={tolerance}
-              onChange={(e) => setTolerance(Number(e.target.value))}
-              onMouseUp={handleReprocess} onTouchEnd={handleReprocess}
-              className="w-full accent-amber-600" />
-            <div className="flex justify-between text-[10px] text-warm-muted">
-              <span>更透明</span><span>更保留</span>
-            </div>
+      {/* Auto tolerance slider */}
+      {mode === "auto" && (
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-xs text-warm-muted">容差：{tolerance}</label>
+            <button onClick={handleReprocess} className="text-xs text-amber-700 hover:text-amber-800">重新处理</button>
           </div>
-        </>
-      ) : (
-        <>
-          {/* Manual edit canvas */}
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <p className="text-xs text-warm-muted mb-1">原图</p>
-              <div className="aspect-square rounded-lg overflow-hidden border border-warm-border bg-gray-100">
-                <img src={imageUrl} alt="原始" className="w-full h-full object-contain" />
-              </div>
-            </div>
-            <div className="flex-1">
-              <p className="text-xs text-warm-muted mb-1">
-                手动修图 {isDrawing && "● 绘制中"}
-              </p>
-              <div className="aspect-square rounded-lg overflow-hidden border border-amber-300 bg-[repeating-conic-gradient(#ddd_0%_25%,#fff_0%_50%)_50%/12px_12px]">
-                <canvas
-                  ref={canvasRef}
-                  className="w-full h-full object-contain cursor-crosshair"
-                  onMouseDown={startDraw}
-                  onMouseMove={moveDraw}
-                  onMouseUp={stopDraw}
-                  onMouseLeave={stopDraw}
-                  onTouchStart={startDraw}
-                  onTouchMove={moveDraw}
-                  onTouchEnd={stopDraw}
-                />
-              </div>
-            </div>
+          <input type="range" min="10" max="120" value={tolerance}
+            onChange={(e) => setTolerance(Number(e.target.value))}
+            onMouseUp={handleReprocess} onTouchEnd={handleReprocess}
+            className="w-full accent-amber-600" />
+          <div className="flex justify-between text-[10px] text-warm-muted">
+            <span>更透明</span><span>更保留</span>
           </div>
+        </div>
+      )}
 
-          {/* Toolbar */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex gap-1 bg-warm-cream border border-warm-border rounded-lg p-0.5">
-              <button
-                onClick={() => setTool("erase")}
-                className={`px-3 py-1 text-xs rounded-md ${tool === "erase" ? "bg-red-100 text-red-700 font-medium" : "text-warm-muted"}`}
-              >🧹 擦除</button>
-              <button
-                onClick={() => setTool("restore")}
-                className={`px-3 py-1 text-xs rounded-md ${tool === "restore" ? "bg-green-100 text-green-700 font-medium" : "text-warm-muted"}`}
-              >↩ 恢复</button>
-            </div>
-            <div className="flex items-center gap-1 flex-1">
-              <span className="text-xs text-warm-muted">笔刷</span>
-              <input type="range" min="4" max="60" value={brushSize}
-                onChange={(e) => setBrushSize(Number(e.target.value))}
-                className="flex-1 accent-amber-600" />
-              <span className="text-xs text-warm-muted w-6">{brushSize}</span>
-            </div>
+      {/* Manual toolbar */}
+      {mode === "manual" && (
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex gap-1 bg-warm-cream border border-warm-border rounded-lg p-0.5">
+            <button onClick={() => setTool("erase")}
+              className={`px-3 py-1 text-xs rounded-md ${tool === "erase" ? "bg-red-100 text-red-700 font-medium" : "text-warm-muted"}`}
+            >🧹 擦除</button>
+            <button onClick={() => setTool("restore")}
+              className={`px-3 py-1 text-xs rounded-md ${tool === "restore" ? "bg-green-100 text-green-700 font-medium" : "text-warm-muted"}`}
+            >↩ 恢复</button>
           </div>
-        </>
+          <div className="flex items-center gap-1 flex-1">
+            <span className="text-xs text-warm-muted">笔刷</span>
+            <input type="range" min="4" max="60" value={brushSize}
+              onChange={(e) => setBrushSize(Number(e.target.value))}
+              className="flex-1 accent-amber-600" />
+            <span className="text-xs text-warm-muted w-6">{brushSize}</span>
+          </div>
+        </div>
       )}
 
       <div className="flex justify-end gap-3">
