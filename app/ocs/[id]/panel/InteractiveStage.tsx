@@ -205,8 +205,11 @@ export default function InteractiveStage({
             style={{ animation: popping ? "pop-bounce 0.3s ease-out" : "none" }}
           >
             {cutoutUrl ? (
-              <img src={cutoutUrl} alt={ocName} className="w-full h-full object-contain"
-                style={{ objectPosition: `${posX}% ${posY}%` }} draggable={false} />
+              <img src={cutoutUrl} alt={ocName}
+                className="w-full h-full object-cover"
+                style={{ objectPosition: `${posX}% ${posY}%` }}
+                draggable={false}
+              />
             ) : avatarUrl ? (
               <img src={avatarUrl} alt={ocName} className="w-full h-full object-cover" draggable={false} />
             ) : (
