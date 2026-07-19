@@ -45,27 +45,21 @@ export default function Modal({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/25 backdrop-blur-sm animate-fade-in"
-      onClick={(e) => {
-        if (e.target === overlayRef.current) onClose();
-      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm animate-fade-in"
+      onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div
         className={cn(
-          "bg-warm-paper border border-warm-border shadow-xl w-full animate-scale-in",
+          "bg-stone-card border border-stone-border shadow-xl w-full animate-scale-in",
           sizeClasses[size]
         )}
-        style={{ borderRadius: "22px 6px 22px 6px / 18px 5px 18px 5px" }}
+        style={{ borderRadius: "12px" }}
       >
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-dashed border-warm-border">
-            <h2 className="text-lg font-hand text-warm-brown">
-              {title}
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-warm-muted hover:text-warm-brown transition-colors text-xl leading-none w-7 h-7 flex items-center justify-center rounded-full hover:bg-warm-bg"
-            >
+          <div className="flex items-center justify-between px-6 py-4 border-b border-stone-border">
+            <h2 className="text-lg font-serif font-medium text-stone-text">{title}</h2>
+            <button onClick={onClose}
+              className="text-stone-muted hover:text-stone-text transition-colors text-xl leading-none w-7 h-7 flex items-center justify-center rounded-full hover:bg-stone-hover">
               ×
             </button>
           </div>

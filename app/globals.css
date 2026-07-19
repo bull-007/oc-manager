@@ -1,160 +1,151 @@
 @import "tailwindcss";
 
 @theme {
-  /* 60% Primary — backgrounds */
-  --color-warm-cream: #FAF7F2;
-  --color-warm-paper: #F7F3EC;
-  --color-warm-bg: #F2EDE5;
+  /* Surfaces — neutral warm-grey, low saturation */
+  --color-stone-page: #EDECE8;
+  --color-stone-card: #E5E4E0;
+  --color-stone-hover: #DCDBD6;
 
-  /* 30% Secondary — borders, muted text */
-  --color-warm-border: #D4CFC6;
-  --color-warm-brown: #5C554A;
-  --color-warm-muted: #9B958A;
+  /* Borders & dividers */
+  --color-stone-border: #D3D2CE;
 
-  /* 10% Accent — buttons, links */
-  --color-warm-accent: #B8977E;
-  --color-warm-red: #C49595;
+  /* Text */
+  --color-stone-text: #54534E;
+  --color-stone-muted: #82817C;
 
-  --color-amber-50: #F7F3EC;
-  --color-amber-100: #EDE5D8;
-  --color-amber-200: #D4CFC6;
-  --color-amber-300: #C4BDB2;
-  --color-amber-400: #B8977E;
-  --color-amber-500: #A08068;
-  --color-amber-600: #8B6D56;
-  --color-amber-700: #B8977E;
-  --color-amber-800: #A08068;
-  --color-amber-900: #6B5040;
+  /* Accent — the only color in the app: muted sage-grey */
+  --color-sage: #869087;
+  --color-sage-50: #F2F3F1;
+  --color-sage-100: #E2E5E1;
+  --color-sage-200: #C5CBC3;
+  --color-sage-500: #869087;
+  --color-sage-600: #6E786F;
+  --color-sage-700: #5A635B;
 
-  --font-serif: var(--font-hand, "Ma Shan Zheng", "STKaiti", cursive);
+  /* Legacy amber — repurposed to sage */
+  --color-amber-50: #F2F3F1;
+  --color-amber-100: #E2E5E1;
+  --color-amber-200: #C5CBC3;
+  --color-amber-400: #869087;
+  --color-amber-500: #6E786F;
+  --color-amber-600: #5A635B;
+  --color-amber-700: #869087;
+  --color-amber-800: #6E786F;
+
+  --color-warm-cream: #EDECE8;
+  --color-warm-paper: #E5E4E0;
+  --color-warm-bg: #EDECE8;
+  --color-warm-border: #D3D2CE;
+  --color-warm-brown: #54534E;
+  --color-warm-muted: #82817C;
+  --color-warm-accent: #869087;
+  --color-warm-red: #B89595;
+
+  --font-serif: "Noto Serif SC", "STKaiti", Georgia, serif;
   --font-sans: "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
-  --font-hand-en: var(--font-hand-en, "Caveat", cursive);
 }
 
-/* ===== Paper Canvas ===== */
+/* ===== Base ===== */
 body {
-  background-color: #F2EDE5;
-  color: #5C554A;
+  background-color: #EDECE8;
+  color: #54534E;
   font-family: var(--font-sans);
   line-height: 1.7;
-}
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background:
-    url("data:image/svg+xml,%3Csvg width='600' height='600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.08;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ===== Handwritten headings ===== */
-h1, h2, h3, h4, .font-serif, .font-hand {
+/* ===== Typography ===== */
+h1, h2, h3, h4 {
   font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #54534E;
 }
-h1 { font-size: 1.75rem; font-weight: 400; letter-spacing: 0.02em; }
-h2 { font-size: 1.35rem; font-weight: 400; letter-spacing: 0.02em; }
-h3 { font-size: 1.1rem; font-weight: 400; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1rem; }
 
 /* ===== Card ===== */
 .sketch-card {
-  background: #F7F3EC;
-  border: 1.5px solid #D4CFC6;
-  border-radius: 20px 6px 20px 6px / 18px 5px 18px 5px;
-  box-shadow: 2px 2px 0 rgba(92,85,74,0.04);
-  position: relative;
-  overflow: hidden;
+  background: #E5E4E0;
+  border: 1px solid #D3D2CE;
+  border-radius: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .sketch-card:hover {
-  border-color: #B8977E;
-  box-shadow: 2px 3px 0 rgba(184,151,126,0.08), 0 6px 16px rgba(92,85,74,0.04);
+  border-color: #869087;
+  box-shadow: 0 2px 12px rgba(84,83,78,0.05);
 }
 
 /* ===== Button ===== */
 .sketch-btn {
-  border: 1.5px solid #D4CFC6;
-  border-radius: 18px 5px 18px 5px / 15px 4px 15px 4px;
-  background: #F7F3EC;
-  color: #5C554A;
+  border: 1px solid #D3D2CE;
+  border-radius: 8px;
+  background: #E5E4E0;
+  color: #54534E;
   font-size: 0.875rem;
-  padding: 0.45rem 1.2rem;
+  padding: 0.45rem 1.1rem;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 1px 1px 0 rgba(92,85,74,0.04);
+  transition: all 0.15s;
   font-weight: 500;
 }
 .sketch-btn:hover {
-  background: #F2EDE5;
-  border-color: #B8977E;
-  transform: translate(-1px, -1px);
-  box-shadow: 2px 3px 0 rgba(92,85,74,0.06);
-}
-.sketch-btn:active {
-  transform: translate(0, 0);
-  box-shadow: 1px 1px 0 rgba(92,85,74,0.04);
+  background: #DCDBD6;
+  border-color: #869087;
 }
 
 /* ===== Input ===== */
 .sketch-input {
-  padding: 0.55rem 0.85rem;
-  border: 1.5px solid #D4CFC6;
-  border-radius: 14px 4px 14px 4px / 12px 3px 12px 3px;
-  background: #FAF7F2;
-  color: #5C554A;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #D3D2CE;
+  border-radius: 8px;
+  background: #EDECE8;
+  color: #54534E;
   font-size: 0.875rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s;
   width: 100%;
 }
 .sketch-input:focus {
-  border-color: #B8977E;
-  box-shadow: 0 0 0 4px rgba(184,151,126,0.08);
+  border-color: #869087;
+  box-shadow: 0 0 0 3px rgba(134,144,135,0.10);
 }
-.sketch-input::placeholder { color: #C4BDB2; }
+.sketch-input::placeholder { color: #B0AFAA; }
 
-/* ===== Dotted border ===== */
-.dot-border {
-  border: 1.5px dashed #D4CFC6;
-  border-radius: 16px 4px 16px 4px;
-}
-
-/* ===== Tag pill ===== */
+/* ===== Tag ===== */
 .tag-pill {
   display: inline-flex; align-items: center;
-  padding: 0.15rem 0.6rem;
-  border-radius: 12px 4px 12px 4px;
+  padding: 0.15rem 0.55rem;
+  border-radius: 6px;
   font-size: 0.7rem;
-  background-color: rgba(184,151,126,0.10);
-  color: #8B6D56;
-  border: 1px solid rgba(184,151,126,0.15);
+  background-color: rgba(134,144,135,0.08);
+  color: #5A635B;
+  border: 1px solid rgba(134,144,135,0.12);
 }
 
 /* ===== Scrollbar ===== */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #F2EDE5; border-radius: 10px; }
-::-webkit-scrollbar-thumb { background: #D4CFC6; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #C4BDB2; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #EDECE8; }
+::-webkit-scrollbar-thumb { background: #D3D2CE; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #C5C5C0; }
 
-/* ===== Decorative divider ===== */
+/* ===== Divider ===== */
 .sketch-divider {
   display: flex; align-items: center; gap: 0.5rem;
-  color: #D4CFC6; font-size: 0.6rem;
+  color: #D3D2CE; font-size: 0.6rem;
 }
 .sketch-divider::before, .sketch-divider::after {
   content: ''; flex: 1; height: 1px;
-  background: linear-gradient(to right, transparent, #D4CFC6, transparent);
+  background: #D3D2CE;
 }
 
 /* ===== Animations ===== */
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes scale-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
-@keyframes slide-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  33% { transform: translateY(-5px) rotate(1.5deg); }
-  66% { transform: translateY(2px) rotate(-1.5deg); }
-}
+@keyframes scale-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pop-bounce {
   0% { transform: scale(1); }
-  40% { transform: scale(1.04); }
+  40% { transform: scale(1.03); }
   70% { transform: scale(0.98); }
   100% { transform: scale(1); }
 }
@@ -167,9 +158,9 @@ h3 { font-size: 1.1rem; font-weight: 400; }
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
-.animate-fade-in { animation: fade-in 0.25s ease-out; }
-.animate-scale-in { animation: scale-in 0.25s ease-out; }
-.animate-slide-up { animation: slide-up 0.35s ease-out; }
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-scale-in { animation: scale-in 0.2s ease-out; }
+.animate-slide-up { animation: slide-up 0.3s ease-out; }
 
 .animate-sparkle-out {
   --sx: 0px; --sy: 0px;
@@ -184,5 +175,5 @@ h3 { font-size: 1.1rem; font-weight: 400; }
 .tiptap-editor { min-height: 130px; padding: 0.5rem; }
 .tiptap-editor:focus { outline: none; }
 .tiptap-editor p { margin-bottom: 0.4rem; }
-.tiptap-editor h2 { font-size: 1.2rem; font-weight: 400; margin: 0.8rem 0 0.4rem; }
-.tiptap-editor h3 { font-size: 1.05rem; font-weight: 400; margin: 0.6rem 0 0.4rem; }
+.tiptap-editor h2 { font-size: 1.15rem; font-weight: 500; margin: 0.8rem 0 0.4rem; }
+.tiptap-editor h3 { font-size: 1rem; font-weight: 500; margin: 0.6rem 0 0.4rem; }

@@ -19,13 +19,12 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          "bg-warm-paper border border-warm-border rounded-xl shadow-sm",
-          "transition-all duration-300",
-          hover &&
-            "hover:shadow-md hover:-translate-y-1 hover:border-amber-400 cursor-pointer",
+          "bg-stone-card border border-stone-border transition-all duration-200",
+          hover && "hover:shadow-md hover:-translate-y-0.5 hover:border-sage cursor-pointer",
           paddings[padding],
           className
         )}
+        style={{ borderRadius: "10px" }}
         {...props}
       >
         {children}

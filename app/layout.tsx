@@ -1,21 +1,6 @@
 import type { Metadata } from "next";
-import { Ma_Shan_Zheng, Caveat } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-
-const handwriting = Ma_Shan_Zheng({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-hand",
-  display: "swap",
-});
-
-const handwritingEN = Caveat({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-hand-en",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "OC 管理器 — 原创角色管理系统",
@@ -28,18 +13,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN" className={`${handwriting.variable} ${handwritingEN.variable}`}>
-      <body className="font-sans text-warm-brown min-h-screen bg-warm-bg">
+    <html lang="zh-CN">
+      <body className="font-sans text-stone-text min-h-screen bg-stone-page">
         {children}
         <Toaster
           position="top-center"
           toastOptions={{
             style: {
-              background: "#FAF7F2",
-              color: "#5C554A",
-              border: "1px solid #D4CFC6",
-              borderRadius: "14px",
-              boxShadow: "0 2px 10px rgba(92,85,74,0.08)",
+              background: "#E5E4E0",
+              color: "#54534E",
+              border: "1px solid #D3D2CE",
+              borderRadius: "8px",
+              boxShadow: "0 2px 8px rgba(84,83,78,0.06)",
             },
           }}
         />

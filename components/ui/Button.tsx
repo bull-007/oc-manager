@@ -7,14 +7,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary:
-    "bg-amber-700 text-warm-cream hover:bg-amber-800 border-amber-700",
-  secondary:
-    "bg-warm-paper text-warm-brown border-warm-border hover:bg-warm-bg",
-  ghost:
-    "bg-transparent text-warm-brown hover:bg-warm-bg border-transparent",
-  danger:
-    "bg-red-500 text-white hover:bg-red-600 border-red-500",
+  primary: "text-white border-transparent",
+  secondary: "bg-stone-card text-stone-text border-stone-border hover:bg-stone-hover",
+  ghost: "bg-transparent text-stone-text hover:bg-stone-hover border-transparent",
+  danger: "bg-red-500 text-white hover:bg-red-600 border-red-500",
 };
 
 const sizes = {
@@ -29,12 +25,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center gap-2 border font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md",
+          "inline-flex items-center justify-center gap-2 border font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-sage/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md",
           variants[variant],
           sizes[size],
           className
         )}
-        style={{ borderRadius: "16px 5px 16px 5px / 14px 4px 14px 4px" }}
+        style={variant === "primary" ? { background: "#869087", borderRadius: "8px" } : { borderRadius: "8px" }}
         {...props}
       >
         {children}
