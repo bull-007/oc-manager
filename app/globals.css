@@ -1,117 +1,142 @@
 @import "tailwindcss";
 
 @theme {
-  /* ===== Remap old tokens to sketch palette ===== */
-  --color-warm-cream: #FCFAF5;
-  --color-warm-paper: #FCFAF5;
-  --color-warm-bg: #F6F2EB;
-  --color-warm-border: #C4BDB2;
-  --color-warm-brown: #3E3832;
-  --color-warm-muted: #8A8278;
-  --color-warm-accent: #C49A6C;
-  --color-warm-red: #C9898B;
+  --color-warm-cream: #FFFDF7;
+  --color-warm-paper: #FFFBF2;
+  --color-warm-bg: #F8F3E8;
+  --color-warm-border: #D4CABC;
+  --color-warm-brown: #4A3F35;
+  --color-warm-muted: #8C8070;
+  --color-warm-accent: #C8926B;
+  --color-warm-red: #C98282;
 
-  --color-amber-50: #F8F4EE;
-  --color-amber-100: #F0E9DC;
-  --color-amber-200: #DED2BE;
-  --color-amber-300: #C4BDB2;
-  --color-amber-400: #C49A6C;
-  --color-amber-500: #B0885A;
-  --color-amber-600: #9C784C;
-  --color-amber-700: #8A6A4A;
-  --color-amber-800: #6B5238;
-  --color-amber-900: #4A3624;
+  --color-amber-50: #FBF7EF;
+  --color-amber-100: #F3EBD8;
+  --color-amber-200: #E2D5BC;
+  --color-amber-300: #CDC0A5;
+  --color-amber-400: #C8926B;
+  --color-amber-500: #B07850;
+  --color-amber-600: #9C6A45;
+  --color-amber-700: #8A5D3E;
+  --color-amber-800: #6B4830;
+  --color-amber-900: #4A3222;
 
-  --font-serif: "KaiTi", "STKaiti", "Noto Serif SC", "SimSun", serif;
-  --font-sans: "KaiTi", "STKaiti", "Noto Serif SC", system-ui, sans-serif;
+  --font-serif: "Noto Serif SC", "STKaiti", "SimSun", Georgia, serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
 }
 
-/* ===== Canvas / Rice-paper base ===== */
+/* ===== Rice-paper Canvas ===== */
 body {
-  background-color: #F6F2EB;
-  color: #3E3832;
-  font-family: var(--font-body);
-  background-image:
-    url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-color: #F8F3E8;
+  color: #4A3F35;
+  font-family: var(--font-sans);
 }
-
-/* Rice-paper card texture */
-.paper-card {
-  background: linear-gradient(135deg, #FEFCF8 0%, #FAF6EF 100%);
-  border: 1.5px solid #C4BDB2;
-  border-radius: 12px;
-  box-shadow:
-    2px 2px 0 rgba(62, 56, 50, 0.04),
-    4px 4px 8px rgba(62, 56, 50, 0.05);
-  position: relative;
-}
-.paper-card::before {
+body::before {
   content: '';
-  position: absolute; inset: 0; border-radius: inherit;
-  background: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none; opacity: 0.5;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    url("data:image/svg+xml,%3Csvg width='600' height='600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.06;
 }
 
-/* Hand-drawn border — slightly uneven */
-.border-sketch {
-  border: 1.5px solid #C4BDB2;
-  border-radius: 16px 6px 16px 6px / 14px 4px 14px 4px;
+/* ===== Hand-drawn Card ===== */
+.sketch-card {
+  background: #FFFBF2;
+  border: 2px solid #D4CABC;
+  border-radius: 24px 8px 24px 8px / 20px 6px 20px 6px;
+  box-shadow:
+    3px 3px 0 rgba(74,63,53,0.03),
+    0 4px 12px rgba(74,63,53,0.04);
+  position: relative;
+  overflow: hidden;
+}
+.sketch-card::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+}
+.sketch-card:hover {
+  border-color: #C8926B;
+  box-shadow: 3px 3px 0 rgba(200,146,107,0.08), 0 6px 18px rgba(74,63,53,0.06);
 }
 
-/* Button base — sketch style */
-.btn-sketch {
-  border: 1.5px solid #C4BDB2;
-  border-radius: 20px 8px 20px 8px;
-  background: #FCFAF5;
-  color: #3E3832;
-  font-family: var(--font-sketch);
+/* ===== Hand-drawn Button ===== */
+.sketch-btn {
+  border: 2px solid #D4CABC;
+  border-radius: 20px 6px 20px 6px / 16px 4px 16px 4px;
+  background: #FFFBF2;
+  color: #4A3F35;
   font-size: 0.875rem;
-  padding: 0.5rem 1.25rem;
+  padding: 0.45rem 1.2rem;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 1px 1px 0 rgba(62,56,50,0.06);
+  box-shadow: 2px 2px 0 rgba(74,63,53,0.04);
+  font-weight: 500;
 }
-.btn-sketch:hover {
-  background: #F6F2EB;
-  border-color: #B0A898;
-  transform: translateY(-1px);
-  box-shadow: 2px 3px 6px rgba(62,56,50,0.08);
+.sketch-btn:hover {
+  background: #F8F3E8;
+  border-color: #B0A090;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 4px 0 rgba(74,63,53,0.06);
 }
-.btn-sketch:active {
-  transform: translateY(0);
-  box-shadow: none;
+.sketch-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 0 rgba(74,63,53,0.04);
+}
+.sketch-btn-accent {
+  composes: sketch-btn;
+  background: #C8926B;
+  border-color: #B07850;
+  color: #FFFBF2;
+}
+.sketch-btn-accent:hover {
+  background: #B07850;
+  border-color: #9C6A45;
+  color: #FFFBF2;
 }
 
-/* Primary accent button */
-.btn-sketch-accent {
-  composes: btn-sketch;
-  background: #C49A6C;
-  border-color: #B0885A;
-  color: #FFFBF5;
-}
-.btn-sketch-accent:hover {
-  background: #B8885A;
-  border-color: #A07848;
+/* ===== Decorative dotted border ===== */
+.dot-border {
+  border: 1.5px dashed #D4CABC;
+  border-radius: 16px 4px 16px 4px;
 }
 
-/* Custom scrollbar */
+/* ===== Custom scrollbar ===== */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #F6F2EB; }
-::-webkit-scrollbar-thumb { background: #C4BDB2; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #B0A898; }
+::-webkit-scrollbar-track { background: #F8F3E8; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #D4CABC; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #B0A090; }
+
+/* ===== Sketchy input ===== */
+.sketch-input {
+  padding: 0.45rem 0.75rem;
+  border: 2px solid #D4CABC;
+  border-radius: 12px 4px 12px 4px / 10px 3px 10px 3px;
+  background: #FFFBF2;
+  color: #4A3F35;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.sketch-input:focus {
+  border-color: #C8926B;
+  box-shadow: 0 0 0 4px rgba(200,146,107,0.08);
+}
+.sketch-input::placeholder { color: #BFB5A5; }
 
 /* ===== Animations ===== */
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes scale-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-@keyframes slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  33% { transform: translateY(-6px) rotate(2deg); }
-  66% { transform: translateY(3px) rotate(-2deg); }
+  33% { transform: translateY(-5px) rotate(1.5deg); }
+  66% { transform: translateY(2px) rotate(-1.5deg); }
 }
 @keyframes pop-bounce {
   0% { transform: scale(1); }
-  40% { transform: scale(1.05); }
+  40% { transform: scale(1.04); }
   70% { transform: scale(0.98); }
   100% { transform: scale(1); }
 }
@@ -124,11 +149,10 @@ body {
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
-.animate-fade-in { animation: fade-in 0.2s ease-out; }
-.animate-scale-in { animation: scale-in 0.2s ease-out; }
-.animate-slide-up { animation: slide-up 0.3s ease-out; }
+.animate-fade-in { animation: fade-in 0.25s ease-out; }
+.animate-scale-in { animation: scale-in 0.25s ease-out; }
+.animate-slide-up { animation: slide-up 0.35s ease-out; }
 
-/* Sparkle particles */
 .animate-sparkle-out {
   --sx: 0px; --sy: 0px;
   animation: sparkle-out 0.6s ease-out forwards;
@@ -138,46 +162,19 @@ body {
 .animate-sparkle-out:nth-child(3) { --sx: -6px; --sy: -14px; }
 .animate-sparkle-out:nth-child(4) { --sx: 14px; --sy: -18px; }
 
-/* Divider with sketch ornament */
-.divider-sketch {
-  display: flex; align-items: center; gap: 0.75rem; color: #C4BDB2;
+/* ===== Decorative sketch divider ===== */
+.sketch-divider {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: #D4CABC; font-size: 0.6rem;
 }
-.divider-sketch::before, .divider-sketch::after {
-  content: '~'; flex: 1; text-align: center; font-size: 0.75rem;
-  letter-spacing: 1rem; opacity: 0.4;
+.sketch-divider::before, .sketch-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, #D4CABC, transparent);
 }
 
-/* Hand-drawn input */
-.input-sketch {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1.5px solid #C4BDB2;
-  border-radius: 10px 4px 10px 4px;
-  background: #FCFAF5;
-  color: #3E3832;
-  font-size: 0.875rem;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.input-sketch:focus {
-  border-color: #C49A6C;
-  box-shadow: 0 0 0 3px rgba(196,154,108,0.1);
-}
-.input-sketch::placeholder { color: #B0A898; }
-
-/* TipTap minimal */
-.tiptap-editor { min-height: 150px; padding: 0.75rem; }
+/* ===== TipTap ===== */
+.tiptap-editor { min-height: 130px; padding: 0.5rem; }
 .tiptap-editor:focus { outline: none; }
-.tiptap-editor p { margin-bottom: 0.5rem; }
-.tiptap-editor h2 { font-size: 1.25rem; font-weight: 700; margin: 1rem 0 0.5rem; }
-.tiptap-editor h3 { font-size: 1.1rem; font-weight: 600; margin: 0.75rem 0 0.5rem; }
-
-/* Tag — sketch pill */
-.tag-sketch {
-  display: inline-flex; align-items: center; gap: 0.25rem;
-  padding: 0.15rem 0.6rem;
-  border: 1px solid #C4BDB2;
-  border-radius: 12px 4px 12px 4px;
-  background: #F6F2EB;
-  font-size: 0.7rem; color: #6B6358;
-}
+.tiptap-editor p { margin-bottom: 0.4rem; }
+.tiptap-editor h2 { font-size: 1.2rem; font-weight: 700; margin: 0.8rem 0 0.4rem; }
+.tiptap-editor h3 { font-size: 1.05rem; font-weight: 600; margin: 0.6rem 0 0.4rem; }
