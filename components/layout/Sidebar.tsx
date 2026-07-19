@@ -6,31 +6,11 @@ import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  {
-    href: "/dashboard",
-    label: "仪表盘",
-    icon: "◇",
-  },
-  {
-    href: "/ocs",
-    label: "OC 档案",
-    icon: "◆",
-  },
-  {
-    href: "/worlds",
-    label: "世界观",
-    icon: "◎",
-  },
-  {
-    href: "/relations",
-    label: "关系图谱",
-    icon: "⬡",
-  },
-  {
-    href: "/inspirations",
-    label: "灵感速记",
-    icon: "✧",
-  },
+  { href: "/dashboard", label: "仪表盘", icon: "~" },
+  { href: "/ocs", label: "OC 档案", icon: "◇" },
+  { href: "/worlds", label: "世界观", icon: "◎" },
+  { href: "/relations", label: "关系图谱", icon: "⤳" },
+  { href: "/inspirations", label: "灵感速记", icon: "✧" },
 ];
 
 interface SidebarProps {
@@ -47,10 +27,10 @@ export default function Sidebar({ user }: SidebarProps) {
   return (
     <aside className="w-64 min-h-screen bg-warm-paper border-r border-warm-border flex flex-col">
       {/* Logo */}
-      <div className="p-6 border-b border-warm-border">
+      <div className="p-6 border-b border-warm-border border-dashed">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <span className="text-2xl">📖</span>
-          <span className="text-lg font-serif font-bold text-warm-brown">
+          <span className="text-2xl" style={{ filter: "grayscale(0.3) opacity(0.8)" }}>📖</span>
+          <span className="text-lg font-serif font-bold text-warm-brown tracking-wide">
             OC 管理器
           </span>
         </Link>

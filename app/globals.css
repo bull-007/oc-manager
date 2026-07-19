@@ -1,150 +1,183 @@
 @import "tailwindcss";
 
 @theme {
-  --color-warm-cream: #FEFCF5;
-  --color-warm-paper: #FFFBF0;
-  --color-warm-bg: #F5F0E8;
-  --color-warm-border: #D4C8B8;
-  --color-warm-brown: #3D2B1F;
-  --color-warm-muted: #8B7E6E;
-  --color-warm-accent: #D4844A;
-  --color-warm-red: #B5443C;
+  /* ===== Remap old tokens to sketch palette ===== */
+  --color-warm-cream: #FCFAF5;
+  --color-warm-paper: #FCFAF5;
+  --color-warm-bg: #F6F2EB;
+  --color-warm-border: #C4BDB2;
+  --color-warm-brown: #3E3832;
+  --color-warm-muted: #8A8278;
+  --color-warm-accent: #C49A6C;
+  --color-warm-red: #C9898B;
 
-  --font-serif: "Noto Serif SC", "Playfair Display", Georgia, serif;
-  --font-sans: "Inter", "Noto Sans SC", system-ui, sans-serif;
+  --color-amber-50: #F8F4EE;
+  --color-amber-100: #F0E9DC;
+  --color-amber-200: #DED2BE;
+  --color-amber-300: #C4BDB2;
+  --color-amber-400: #C49A6C;
+  --color-amber-500: #B0885A;
+  --color-amber-600: #9C784C;
+  --color-amber-700: #8A6A4A;
+  --color-amber-800: #6B5238;
+  --color-amber-900: #4A3624;
+
+  --font-serif: "KaiTi", "STKaiti", "Noto Serif SC", "SimSun", serif;
+  --font-sans: "KaiTi", "STKaiti", "Noto Serif SC", system-ui, sans-serif;
 }
 
-/* Paper texture background */
+/* ===== Canvas / Rice-paper base ===== */
 body {
-  background-color: #F5F0E8;
+  background-color: #F6F2EB;
+  color: #3E3832;
+  font-family: var(--font-body);
   background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(212, 132, 74, 0.03) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(181, 68, 60, 0.03) 0%, transparent 60%),
-    radial-gradient(ellipse at 40% 80%, rgba(212, 132, 74, 0.04) 0%, transparent 60%);
+    url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* Rice-paper card texture */
+.paper-card {
+  background: linear-gradient(135deg, #FEFCF8 0%, #FAF6EF 100%);
+  border: 1.5px solid #C4BDB2;
+  border-radius: 12px;
+  box-shadow:
+    2px 2px 0 rgba(62, 56, 50, 0.04),
+    4px 4px 8px rgba(62, 56, 50, 0.05);
+  position: relative;
+}
+.paper-card::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: inherit;
+  background: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; opacity: 0.5;
+}
+
+/* Hand-drawn border — slightly uneven */
+.border-sketch {
+  border: 1.5px solid #C4BDB2;
+  border-radius: 16px 6px 16px 6px / 14px 4px 14px 4px;
+}
+
+/* Button base — sketch style */
+.btn-sketch {
+  border: 1.5px solid #C4BDB2;
+  border-radius: 20px 8px 20px 8px;
+  background: #FCFAF5;
+  color: #3E3832;
+  font-family: var(--font-sketch);
+  font-size: 0.875rem;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 1px 1px 0 rgba(62,56,50,0.06);
+}
+.btn-sketch:hover {
+  background: #F6F2EB;
+  border-color: #B0A898;
+  transform: translateY(-1px);
+  box-shadow: 2px 3px 6px rgba(62,56,50,0.08);
+}
+.btn-sketch:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Primary accent button */
+.btn-sketch-accent {
+  composes: btn-sketch;
+  background: #C49A6C;
+  border-color: #B0885A;
+  color: #FFFBF5;
+}
+.btn-sketch-accent:hover {
+  background: #B8885A;
+  border-color: #A07848;
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #F6F2EB; }
+::-webkit-scrollbar-thumb { background: #C4BDB2; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #B0A898; }
 
-::-webkit-scrollbar-track {
-  background: #F5F0E8;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D4C8B8;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #B8A898;
-}
-
-/* Animations */
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.2s ease-out;
-}
-
-.animate-scale-in {
-  animation: scale-in 0.2s ease-out;
-}
-
-.animate-slide-up {
-  animation: slide-up 0.3s ease-out;
-}
-
-/* Decorative divider */
-.divider-ornament {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: #D4C8B8;
-}
-
-.divider-ornament::before,
-.divider-ornament::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #D4C8B8, transparent);
-}
-
-/* Rich text editor styles */
-.tiptap-editor {
-  min-height: 150px;
-  padding: 0.75rem;
-}
-
-.tiptap-editor:focus {
-  outline: none;
-}
-
-.tiptap-editor p {
-  margin-bottom: 0.5rem;
-}
-
-.tiptap-editor h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 1rem 0 0.5rem;
-}
-
-.tiptap-editor h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0.75rem 0 0.5rem;
-}
-
-/* Floating animation for interactive panel */
+/* ===== Animations ===== */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  33% { transform: translateY(-8px) rotate(3deg); }
-  66% { transform: translateY(4px) rotate(-3deg); }
+  33% { transform: translateY(-6px) rotate(2deg); }
+  66% { transform: translateY(3px) rotate(-2deg); }
 }
-
-/* Pop bounce - subtle click feedback */
 @keyframes pop-bounce {
   0% { transform: scale(1); }
-  40% { transform: scale(1.06); }
+  40% { transform: scale(1.05); }
   70% { transform: scale(0.98); }
   100% { transform: scale(1); }
 }
-
-/* Sparkle particles fly out */
 @keyframes sparkle-out {
-  0% { opacity: 1; transform: translate(0, 0) scale(1); }
-  100% { opacity: 0; transform: translate(var(--sx, 10px), var(--sy, -20px)) scale(0); }
+  0% { opacity: 1; transform: translate(0,0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--sx,10px), var(--sy,-20px)) scale(0); }
 }
-
-.animate-sparkle-out {
-  --sx: 0px;
-  --sy: 0px;
-  animation: sparkle-out 0.6s ease-out forwards;
-}
-.animate-sparkle-out:nth-child(1) { --sx: -12px; --sy: -18px; }
-.animate-sparkle-out:nth-child(2) { --sx: 14px; --sy: -22px; }
-.animate-sparkle-out:nth-child(3) { --sx: -8px; --sy: -15px; }
-.animate-sparkle-out:nth-child(4) { --sx: 16px; --sy: -20px; }
-
-/* Confetti fall for birthday */
 @keyframes confetti-fall {
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-scale-in { animation: scale-in 0.2s ease-out; }
+.animate-slide-up { animation: slide-up 0.3s ease-out; }
+
+/* Sparkle particles */
+.animate-sparkle-out {
+  --sx: 0px; --sy: 0px;
+  animation: sparkle-out 0.6s ease-out forwards;
+}
+.animate-sparkle-out:nth-child(1) { --sx: -10px; --sy: -16px; }
+.animate-sparkle-out:nth-child(2) { --sx: 12px; --sy: -20px; }
+.animate-sparkle-out:nth-child(3) { --sx: -6px; --sy: -14px; }
+.animate-sparkle-out:nth-child(4) { --sx: 14px; --sy: -18px; }
+
+/* Divider with sketch ornament */
+.divider-sketch {
+  display: flex; align-items: center; gap: 0.75rem; color: #C4BDB2;
+}
+.divider-sketch::before, .divider-sketch::after {
+  content: '~'; flex: 1; text-align: center; font-size: 0.75rem;
+  letter-spacing: 1rem; opacity: 0.4;
+}
+
+/* Hand-drawn input */
+.input-sketch {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #C4BDB2;
+  border-radius: 10px 4px 10px 4px;
+  background: #FCFAF5;
+  color: #3E3832;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-sketch:focus {
+  border-color: #C49A6C;
+  box-shadow: 0 0 0 3px rgba(196,154,108,0.1);
+}
+.input-sketch::placeholder { color: #B0A898; }
+
+/* TipTap minimal */
+.tiptap-editor { min-height: 150px; padding: 0.75rem; }
+.tiptap-editor:focus { outline: none; }
+.tiptap-editor p { margin-bottom: 0.5rem; }
+.tiptap-editor h2 { font-size: 1.25rem; font-weight: 700; margin: 1rem 0 0.5rem; }
+.tiptap-editor h3 { font-size: 1.1rem; font-weight: 600; margin: 0.75rem 0 0.5rem; }
+
+/* Tag — sketch pill */
+.tag-sketch {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid #C4BDB2;
+  border-radius: 12px 4px 12px 4px;
+  background: #F6F2EB;
+  font-size: 0.7rem; color: #6B6358;
 }
