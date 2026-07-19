@@ -9,6 +9,11 @@ export default async function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-stone-page">
       <div className="max-w-lg mx-auto text-center animate-slide-up">
+        {/* Geometric logo mark */}
+        <div className="mb-8 flex items-center justify-center gap-3 text-stone-muted/20 text-xl select-none">
+          <span>◇</span><span>◆</span><span>◎</span><span>⬡</span><span>△</span>
+        </div>
+
         <h1 className="text-3xl font-serif font-medium text-stone-text mb-3">OC 管理器</h1>
         <p className="text-stone-muted mb-2 text-sm">原创角色管理系统</p>
         <p className="text-stone-muted mb-10 max-w-xs mx-auto leading-relaxed text-sm">
@@ -30,20 +35,23 @@ export default async function Home() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-16 text-left">
           {[
-            { title: "OC 档案", desc: "详尽的角色信息管理，从外貌性格到背景故事" },
-            { title: "世界观", desc: "构建完整的世界设定体系，地理历史文化" },
-            { title: "关系图谱", desc: "可视化人物关系网，亲密度与连线一目了然" },
+            { mark: "◆", title: "OC 档案", desc: "详尽的角色信息管理，从外貌性格到背景故事" },
+            { mark: "◎", title: "世界观", desc: "构建完整的世界设定体系，地理历史文化" },
+            { mark: "⬡", title: "关系图谱", desc: "可视化人物关系网，亲密度与连线一目了然" },
           ].map((f) => (
             <div key={f.title}
-              className="p-5 border border-stone-border bg-stone-card transition-colors hover:border-sage"
+              className="p-5 border border-stone-border bg-stone-card transition-colors hover:border-sage group"
               style={{ borderRadius: "10px" }}>
+              <div className="text-stone-muted/30 text-lg mb-2 group-hover:text-sage-400/50 transition-colors">{f.mark}</div>
               <h3 className="font-serif font-medium text-stone-text mb-1 text-base">{f.title}</h3>
               <p className="text-sm text-stone-muted">{f.desc}</p>
             </div>
           ))}
         </div>
 
-        <p className="mt-14 text-xs text-stone-muted">温暖叙事 · 创作伴侣 · 灵感永存</p>
+        <p className="mt-14 text-xs text-stone-muted/50 tracking-wider">
+          <span className="text-stone-muted/20">◇</span> 温暖叙事 · 创作伴侣 · 灵感永存 <span className="text-stone-muted/20">◇</span>
+        </p>
       </div>
     </div>
   );
