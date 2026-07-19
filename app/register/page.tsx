@@ -50,11 +50,22 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-warm-bg">
-      <div className="w-full max-w-md animate-slide-up">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-warm-bg relative overflow-hidden">
+      {/* Background watercolor blobs */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
+        style={{
+          background: "radial-gradient(ellipse 55% 45% at 80% 20%, rgba(200,146,107,0.07) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 15% 70%, rgba(160,184,160,0.06) 0%, transparent 55%)",
+        }} />
+
+      <div className="w-full max-w-md animate-slide-up relative">
         <div className="text-center mb-8">
-          <Link href="/" className="text-4xl">
-            📖
+          <Link href="/" className="text-4xl relative inline-block">
+            <span className="absolute inset-0 rounded-full opacity-40"
+              style={{
+                background: "radial-gradient(circle, rgba(200,146,107,0.15) 0%, transparent 70%)",
+                transform: "scale(1.5)",
+              }} />
+            <span className="relative">📖</span>
           </Link>
           <h1 className="text-2xl font-serif font-bold text-warm-brown mt-2">
             创建账号
@@ -64,8 +75,8 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <div className="bg-warm-paper border border-warm-border rounded-2xl p-6 shadow-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="watercolor-card corners-floral p-6">
+          <form onSubmit={handleSubmit} className="space-y-4 relative">
             <div>
               <label className="block text-sm font-medium text-warm-brown mb-1">
                 用户名
@@ -75,7 +86,7 @@ export default function RegisterPage() {
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-2.5 border border-warm-border rounded-lg bg-warm-cream text-warm-brown placeholder-warm-muted focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                className="sketch-input w-full"
                 placeholder="你的名字"
               />
             </div>
@@ -89,7 +100,7 @@ export default function RegisterPage() {
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-4 py-2.5 border border-warm-border rounded-lg bg-warm-cream text-warm-brown placeholder-warm-muted focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                className="sketch-input w-full"
                 placeholder="your@email.com"
               />
             </div>
@@ -104,7 +115,7 @@ export default function RegisterPage() {
                 minLength={6}
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full px-4 py-2.5 border border-warm-border rounded-lg bg-warm-cream text-warm-brown placeholder-warm-muted focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                className="sketch-input w-full"
                 placeholder="至少6位字符"
               />
             </div>
@@ -112,9 +123,15 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-amber-700 text-warm-cream rounded-lg font-medium hover:bg-amber-800 transition-colors disabled:opacity-50 shadow-sm"
+              className="w-full py-2.5 text-warm-cream font-medium transition-all shadow-sm hover:shadow-md disabled:opacity-50 relative overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, #8A5D3E 0%, #6B4830 100%)",
+                borderRadius: "18px 5px 18px 5px / 15px 4px 15px 4px",
+              }}
             >
-              {loading ? "注册中..." : "注册"}
+              <span className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
+                style={{ background: "radial-gradient(ellipse 60% 40% at 50% 30%, rgba(255,255,255,0.12) 0%, transparent 60%)" }} />
+              <span className="relative">{loading ? "注册中..." : "注册"}</span>
             </button>
           </form>
 

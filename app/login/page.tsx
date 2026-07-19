@@ -37,11 +37,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-warm-bg">
-      <div className="w-full max-w-md animate-slide-up">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-warm-bg relative overflow-hidden">
+      {/* Background watercolor blobs */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
+        style={{
+          background: "radial-gradient(ellipse 60% 50% at 20% 25%, rgba(200,146,107,0.07) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 80% 70%, rgba(212,160,160,0.06) 0%, transparent 55%)",
+        }} />
+
+      <div className="w-full max-w-md animate-slide-up relative">
         <div className="text-center mb-8">
-          <Link href="/" className="text-4xl">
-            📖
+          <Link href="/" className="text-4xl relative inline-block">
+            {/* Watercolor blob behind icon */}
+            <span className="absolute inset-0 rounded-full opacity-40"
+              style={{
+                background: "radial-gradient(circle, rgba(200,146,107,0.15) 0%, transparent 70%)",
+                transform: "scale(1.5)",
+              }} />
+            <span className="relative">📖</span>
           </Link>
           <h1 className="text-2xl font-serif font-bold text-warm-brown mt-2">
             欢迎回来
@@ -51,8 +63,8 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-warm-paper border border-warm-border rounded-2xl p-6 shadow-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="watercolor-card corners-floral p-6">
+          <form onSubmit={handleSubmit} className="space-y-4 relative">
             <div>
               <label className="block text-sm font-medium text-warm-brown mb-1">
                 邮箱
@@ -62,7 +74,7 @@ export default function LoginPage() {
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-4 py-2.5 border border-warm-border rounded-lg bg-warm-cream text-warm-brown placeholder-warm-muted focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                className="sketch-input w-full"
                 placeholder="your@email.com"
               />
             </div>
@@ -76,7 +88,7 @@ export default function LoginPage() {
                 required
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full px-4 py-2.5 border border-warm-border rounded-lg bg-warm-cream text-warm-brown placeholder-warm-muted focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                className="sketch-input w-full"
                 placeholder="输入密码"
               />
             </div>
@@ -84,9 +96,15 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-amber-700 text-warm-cream rounded-lg font-medium hover:bg-amber-800 transition-colors disabled:opacity-50 shadow-sm"
+              className="w-full py-2.5 text-warm-cream font-medium transition-all shadow-sm hover:shadow-md disabled:opacity-50 relative overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, #8A5D3E 0%, #6B4830 100%)",
+                borderRadius: "18px 5px 18px 5px / 15px 4px 15px 4px",
+              }}
             >
-              {loading ? "登录中..." : "登录"}
+              <span className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
+                style={{ background: "radial-gradient(ellipse 60% 40% at 50% 30%, rgba(255,255,255,0.12) 0%, transparent 60%)" }} />
+              <span className="relative">{loading ? "登录中..." : "登录"}</span>
             </button>
           </form>
 

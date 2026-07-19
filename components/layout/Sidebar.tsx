@@ -19,15 +19,36 @@ export default function Sidebar({ user }: {
   const pathname = usePathname();
 
   return (
-    <aside className="w-56 min-h-screen bg-warm-paper border-r-2 border-dashed border-warm-border flex flex-col">
+    <aside className="w-56 min-h-screen bg-warm-paper border-r-2 border-dashed border-warm-border flex flex-col relative watercolor-amber">
+      {/* Decorative vine along right edge */}
+      <div className="absolute right-0 top-0 bottom-0 w-5 pointer-events-none opacity-[0.20]" aria-hidden="true">
+        <svg width="20" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="v" x="0" y="0" width="20" height="64" patternUnits="userSpaceOnUse">
+              <path d="M10 0 Q14 16 10 32 Q6 48 10 64" stroke="#8A7E6E" fill="none" strokeWidth="0.6"/>
+              <circle cx="10" cy="12" r="1.6" fill="#C8926B" opacity="0.5"/>
+              <circle cx="4" cy="28" r="1.2" fill="#D4A0A0" opacity="0.4"/>
+              <circle cx="10" cy="44" r="1.6" fill="#C8926B" opacity="0.5"/>
+              <circle cx="16" cy="56" r="1.0" fill="#A0B8A0" opacity="0.3"/>
+            </pattern>
+          </defs>
+          <rect width="20" height="100%" fill="url(#v)"/>
+        </svg>
+      </div>
+
       {/* Decorative top doodle */}
-      <div className="px-4 pt-1 text-warm-muted/20 text-xs select-none leading-none text-center">
-        · ✦ · ◇ · ✧ · ◎ · ⬡ · ✦ ·
+      <div className="px-4 pt-2 text-warm-muted/25 text-xs select-none leading-none text-center tracking-[0.3em]">
+        ✦ ◇ ✧ ◎ ⬡ ✦
       </div>
 
       {/* Logo */}
-      <div className="px-5 py-4 border-b-2 border-dashed border-warm-border">
-        <Link href="/dashboard" className="flex items-center gap-2.5 group">
+      <div className="relative px-5 py-4 border-b-2 border-dashed border-warm-border">
+        {/* Watercolor blob behind logo */}
+        <div className="absolute inset-2 rounded-2xl opacity-60 pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(200,146,107,0.12) 0%, transparent 70%)",
+          }} />
+        <Link href="/dashboard" className="flex items-center gap-2.5 group relative">
           <span className="text-2xl transition-transform group-hover:scale-110 group-hover:-rotate-6"
             style={{ filter: "hue-rotate(-10deg) saturate(0.8)" }}>📖</span>
           <div>
@@ -48,19 +69,28 @@ export default function Sidebar({ user }: {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm transition-all duration-200 group",
+                "flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm transition-all duration-200 group relative overflow-hidden",
                 active
-                  ? "bg-amber-100/80 text-amber-800 font-medium border border-amber-200/60 shadow-sm"
-                  : "text-warm-brown/70 hover:bg-amber-50/50 hover:text-amber-700 hover:translate-x-1"
+                  ? "text-amber-800 font-medium shadow-sm"
+                  : "text-warm-brown/70 hover:text-amber-700 hover:translate-x-1"
               )}
+              style={active ? {
+                background: "radial-gradient(ellipse 100% 100% at 50% 50%, rgba(212,160,160,0.15) 0%, rgba(200,146,107,0.10) 40%, rgba(243,235,216,0.6) 100%)",
+                border: "1px solid rgba(200,146,107,0.2)",
+              } : undefined}
             >
+              {/* Watercolor hover blob */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{
+                  background: "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(200,146,107,0.08) 0%, transparent 70%)",
+                }} />
               <span className={cn(
-                "text-base w-6 text-center transition-transform",
+                "text-base w-6 text-center transition-transform relative",
                 active ? "scale-110" : "group-hover:scale-110",
               )}>
                 {item.icon}
               </span>
-              <span>{item.label}</span>
+              <span className="relative">{item.label}</span>
               {active && (
                 <span className="ml-auto text-amber-400 text-xs">·</span>
               )}
@@ -70,12 +100,18 @@ export default function Sidebar({ user }: {
       </nav>
 
       {/* Decorative bottom flowers */}
-      <div className="px-4 pb-1 text-warm-muted/15 text-xs select-none leading-none text-center">
-        ✿ · ❀ · ✾ · ✿
+      <div className="px-4 pb-1 text-warm-muted/20 text-xs select-none leading-none text-center tracking-[0.2em]">
+        ✿ ❀ ✾ ✿
       </div>
 
       {/* User */}
-      <div className="m-3 p-3 rounded-2xl bg-amber-50/50 border border-dashed border-amber-200/50">
+      <div className="m-3 p-3 rounded-2xl border border-dashed border-amber-200/50 relative overflow-hidden"
+        style={{
+          background: "radial-gradient(ellipse 70% 60% at 30% 30%, rgba(200,146,107,0.06) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 70% 70%, rgba(160,184,160,0.04) 0%, transparent 60%), #FFFBF2",
+        }}>
+        {/* Corner sparkles */}
+        <span className="absolute top-1.5 left-2 text-[9px] text-amber-300/40 pointer-events-none">✦</span>
+        <span className="absolute bottom-1.5 right-2 text-[8px] text-rose-300/30 pointer-events-none">✿</span>
         <div className="flex items-center gap-2.5 mb-2">
           <div className="w-8 h-8 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700 font-bold text-xs">
             {user.name?.charAt(0) || "U"}

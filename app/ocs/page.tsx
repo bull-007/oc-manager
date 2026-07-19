@@ -126,7 +126,10 @@ export default function OCsPage() {
           </div>
         )}
 
-        <div className="bg-warm-paper border border-warm-border rounded-xl p-1.5 space-y-0.5">
+        <div className="bg-warm-paper border border-warm-border rounded-xl p-1.5 space-y-0.5 relative overflow-hidden"
+          style={{
+            background: "radial-gradient(ellipse 60% 50% at 70% 20%, rgba(160,184,160,0.06) 0%, transparent 55%), #FFFBF2",
+          }}>
           <button onClick={() => setCatFilter("")}
             className={`w-full text-left text-xs px-3 py-2 rounded-lg transition-all ${
               !catFilter ? "bg-amber-100 text-amber-800 font-medium shadow-sm" : "text-warm-muted hover:bg-warm-cream"
@@ -165,13 +168,15 @@ export default function OCsPage() {
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => { setBatchMode(!batchMode); setSelected(new Set()); }}
-              className={`text-sm px-4 py-2 rounded-lg border transition-all ${
+              className={`text-sm px-4 py-2 border transition-all ${
                 batchMode ? "bg-amber-100 border-amber-300 text-amber-800 shadow-sm" : "border-warm-border text-warm-muted hover:bg-warm-paper hover:text-warm-brown"
-              }`}>
+              }`}
+              style={{ borderRadius: "14px 4px 14px 4px / 12px 3px 12px 3px" }}>
               {batchMode ? "退出批量" : "批量管理"}
             </button>
             <Link href="/ocs/new"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-amber-700 text-warm-cream rounded-lg text-sm font-medium hover:bg-amber-800 transition-colors shadow-sm">
+              className="inline-flex items-center gap-2 px-4 py-2 bg-amber-700 text-warm-cream text-sm font-medium hover:bg-amber-800 transition-colors shadow-sm"
+              style={{ borderRadius: "16px 5px 16px 5px / 14px 4px 14px 4px" }}>
               + 新建 OC
             </Link>
           </div>
@@ -179,7 +184,8 @@ export default function OCsPage() {
 
         {/* Batch toolbar */}
         {batchMode && selected.size > 0 && (
-          <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl animate-slide-up">
+          <div className="flex items-center gap-3 p-3 border border-amber-200 rounded-xl animate-slide-up"
+            style={{ background: "radial-gradient(ellipse 60% 40% at 30% 50%, rgba(200,146,107,0.08) 0%, transparent 60%), #FFFBF2" }}>
             <span className="text-sm text-warm-brown font-medium">已选 {selected.size} 项</span>
             <select value={moveTarget} onChange={(e) => setMoveTarget(e.target.value)}
               className="text-xs px-2 py-1.5 border border-warm-border rounded bg-white">
@@ -203,8 +209,17 @@ export default function OCsPage() {
         {isLoading && <p className="text-center py-12 text-warm-muted">加载中...</p>}
 
         {!isLoading && filtered.length === 0 && (
-          <div className="bg-warm-paper border border-warm-border border-dashed rounded-xl p-12 text-center">
-            <div className="text-5xl mb-3">◆</div>
+          <div className="illustrated-empty">
+            <svg width="100" height="70" viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 8 Q24 6 40 8 Q45 40 40 58 Q38 60 22 56 Q20 38 22 8Z" stroke="#8A7E6E" strokeWidth="1.2" fill="none" opacity="0.45"/>
+              <path d="M40 8 Q48 7 78 12 Q75 40 72 58 Q74 60 40 58" stroke="#8A7E6E" strokeWidth="1.2" fill="none" opacity="0.45"/>
+              <line x1="40" y1="8" x2="40" y2="58" stroke="#8A7E6E" strokeWidth="0.7" opacity="0.35"/>
+              <circle cx="55" cy="28" r="7" fill="none" stroke="#C8926B" strokeWidth="0.8" opacity="0.3"/>
+              <circle cx="55" cy="28" r="3" fill="#C8926B" opacity="0.12"/>
+              <line x1="62" y1="28" x2="72" y2="28" stroke="#C8926B" strokeWidth="0.6" opacity="0.25"/>
+              <circle cx="28" cy="35" r="2" fill="#D4A0A0" opacity="0.25"/>
+              <circle cx="70" cy="38" r="1.5" fill="#A0B8A0" opacity="0.2"/>
+            </svg>
             <p className="text-warm-muted mb-4">{search||species||occupation||tag||catFilter ? "没有找到匹配的 OC" : "还没有创建任何 OC"}</p>
             {!search&&!species&&!occupation&&!tag&&!catFilter && (
               <Link href="/ocs/new" className="text-amber-700 hover:text-amber-800 font-medium">创建第一个 OC →</Link>
@@ -216,7 +231,8 @@ export default function OCsPage() {
           {filtered.map((oc: any) => (
             <Link key={oc.id} href={`/ocs/${oc.id}/panel`}
               onClick={(e) => { if (batchMode) { e.preventDefault(); toggleSelect(oc.id); } }}>
-              <Card hover={!batchMode} padding="md" className={`h-full relative ${selected.has(oc.id) ? "ring-2 ring-amber-400" : ""}`}>
+              <Card hover={!batchMode} padding="md" className={`h-full relative ${selected.has(oc.id) ? "ring-2 ring-amber-400" : ""}`}
+                watercolor="amber">
                 {batchMode && (
                   <div className={`absolute top-3 right-3 z-10 w-5 h-5 rounded border-2 flex items-center justify-center ${selected.has(oc.id) ? "bg-amber-500 border-amber-500 text-white" : "border-warm-border bg-white"}`}>
                     {selected.has(oc.id) && "✓"}
@@ -224,7 +240,10 @@ export default function OCsPage() {
                 )}
                 <div className="flex items-start gap-4">
                   <div className="relative flex-shrink-0">
-                    <div className="w-16 h-16 rounded-xl bg-amber-100 flex items-center justify-center overflow-hidden border-2 border-warm-border">
+                    <div className="w-16 h-16 rounded-xl bg-amber-100 flex items-center justify-center overflow-hidden border-2 border-warm-border"
+                      style={{
+                        background: "radial-gradient(circle at 40% 40%, rgba(200,146,107,0.18) 0%, rgba(243,235,216,0.5) 100%)",
+                      }}>
                       {oc.media?.[0]?.url ? (
                         <img src={oc.media[0].url} alt={oc.name} className="w-full h-full object-cover" />
                       ) : (
@@ -239,7 +258,7 @@ export default function OCsPage() {
                     {oc.world && <p className="text-xs text-amber-700 mt-1">◎ {oc.world.name}</p>}
                     <div className="flex flex-wrap gap-1 mt-2">
                       {oc.ocTags?.slice(0,3).map((t:any) => (
-                        <span key={t.tag.id} className="text-xs px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">{t.tag.name}</span>
+                        <span key={t.tag.id} className="tag-pill">{t.tag.name}</span>
                       ))}
                       {oc.ocTags?.length > 3 && <span className="text-xs text-warm-muted">+{oc.ocTags.length-3}</span>}
                     </div>

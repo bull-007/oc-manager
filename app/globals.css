@@ -21,6 +21,18 @@
   --color-amber-800: #6B4830;
   --color-amber-900: #4A3222;
 
+  --color-dusty-rose: #D4A0A0;
+  --color-dusty-rose-50: #FBF5F5;
+  --color-dusty-rose-100: #F2E0E0;
+  --color-dusty-rose-200: #E8C8C8;
+
+  --color-sage: #A0B8A0;
+  --color-sage-50: #F2F6F2;
+  --color-sage-100: #D8E5D8;
+  --color-sage-200: #BED4BE;
+
+  --color-ochre: #C89860;
+
   --font-serif: "Noto Serif SC", "STKaiti", "SimSun", Georgia, serif;
   --font-sans: "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
 }
@@ -36,10 +48,70 @@ body::before {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background:
     url("data:image/svg+xml,%3Csvg width='600' height='600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.06;
+  opacity: 0.12;
+}
+/* Warm watercolor wash layer */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 25%, rgba(220,180,140,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 45% at 75% 30%, rgba(210,170,160,0.10) 0%, transparent 45%),
+    radial-gradient(ellipse 60% 40% at 60% 75%, rgba(180,200,180,0.08) 0%, transparent 45%),
+    radial-gradient(ellipse 40% 50% at 35% 60%, rgba(210,160,130,0.07) 0%, transparent 50%);
+  opacity: 0.8;
 }
 
-/* ===== Hand-drawn Card ===== */
+/* ===== Watercolor Blob Utilities ===== */
+.watercolor-amber {
+  background-image:
+    radial-gradient(ellipse 55% 45% at 25% 35%, rgba(220,170,130,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 38% at 68% 58%, rgba(200,140,100,0.20) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 42% at 80% 22%, rgba(230,180,150,0.14) 0%, transparent 48%);
+}
+.watercolor-rose {
+  background-image:
+    radial-gradient(ellipse 50% 40% at 22% 32%, rgba(220,165,165,0.26) 0%, transparent 55%),
+    radial-gradient(ellipse 42% 38% at 65% 55%, rgba(210,150,150,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 40% at 78% 25%, rgba(230,180,180,0.12) 0%, transparent 48%);
+}
+.watercolor-sage {
+  background-image:
+    radial-gradient(ellipse 52% 42% at 28% 34%, rgba(170,195,170,0.24) 0%, transparent 55%),
+    radial-gradient(ellipse 38% 40% at 62% 55%, rgba(150,180,150,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 38% at 75% 20%, rgba(165,190,165,0.12) 0%, transparent 48%);
+}
+.watercolor-mixed {
+  background-image:
+    radial-gradient(ellipse 45% 38% at 20% 30%, rgba(220,170,130,0.22) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 35% at 72% 28%, rgba(220,165,165,0.18) 0%, transparent 48%),
+    radial-gradient(ellipse 40% 38% at 58% 62%, rgba(170,195,170,0.18) 0%, transparent 50%);
+}
+
+/* Watercolor section — card with watercolor wash */
+.watercolor-card {
+  background-color: #FFFBF2;
+  background-image:
+    radial-gradient(ellipse 55% 45% at 25% 35%, rgba(220,170,130,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 38% at 68% 58%, rgba(200,140,100,0.14) 0%, transparent 50%);
+  border: 2px solid #D4CABC;
+  border-radius: 24px 8px 24px 8px / 20px 6px 20px 6px;
+  box-shadow: 3px 3px 0 rgba(74,63,53,0.04), 0 4px 12px rgba(74,63,53,0.05);
+  position: relative;
+  overflow: hidden;
+}
+.watercolor-card::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+}
+.watercolor-card:hover {
+  border-color: #C8926B;
+  box-shadow: 3px 3px 0 rgba(200,146,107,0.10), 0 6px 18px rgba(74,63,53,0.07);
+}
+
+/* ===== Hand-drawn Card (legacy sketch) ===== */
 .sketch-card {
   background: #FFFBF2;
   border: 2px solid #D4CABC;
@@ -54,7 +126,7 @@ body::before {
   content: '';
   position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   background: url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.04;
+  opacity: 0.07;
 }
 .sketch-card:hover {
   border-color: #C8926B;
@@ -83,17 +155,6 @@ body::before {
 .sketch-btn:active {
   transform: translate(0, 0);
   box-shadow: 1px 1px 0 rgba(74,63,53,0.04);
-}
-.sketch-btn-accent {
-  composes: sketch-btn;
-  background: #C8926B;
-  border-color: #B07850;
-  color: #FFFBF2;
-}
-.sketch-btn-accent:hover {
-  background: #B07850;
-  border-color: #9C6A45;
-  color: #FFFBF2;
 }
 
 /* ===== Decorative dotted border ===== */
@@ -125,6 +186,139 @@ body::before {
 }
 .sketch-input::placeholder { color: #BFB5A5; }
 
+/* ===== Decorative Section with Watercolor ===== */
+.watercolor-section {
+  background-color: #FFFBF2;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 40%, rgba(220,170,130,0.20) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 45% at 85% 60%, rgba(170,195,170,0.16) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 50% 75%, rgba(220,165,165,0.14) 0%, transparent 50%);
+  border: 2px solid #D4CABC;
+  border-radius: 20px 6px 20px 6px / 18px 5px 18px 5px;
+  box-shadow: 2px 2px 0 rgba(74,63,53,0.04), 0 4px 14px rgba(74,63,53,0.05);
+}
+
+/* ===== Corner Decorations ===== */
+.corners-floral {
+  position: relative;
+}
+.corners-floral::before {
+  content: '';
+  position: absolute; top: -2px; left: -2px;
+  width: 48px; height: 48px; pointer-events: none; z-index: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M2 22 Q8 10 20 3' fill='none' stroke='%23C8926B' stroke-width='1.5' opacity='0.6'/%3E%3Ccircle cx='9' cy='15' r='2.8' fill='%23D4A0A0' opacity='0.6'/%3E%3Ccircle cx='17' cy='7' r='2.2' fill='%23C8926B' opacity='0.5'/%3E%3Ccircle cx='5' cy='22' r='2' fill='%23A0B8A0' opacity='0.5'/%3E%3Cpath d='M8 28 Q14 22 24 20' fill='none' stroke='%23C8926B' stroke-width='1' opacity='0.4'/%3E%3C/svg%3E") no-repeat;
+  border-radius: inherit;
+}
+.corners-floral::after {
+  content: '';
+  position: absolute; bottom: -2px; right: -2px;
+  width: 48px; height: 48px; pointer-events: none; z-index: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M38 18 Q32 30 20 37' fill='none' stroke='%23C8926B' stroke-width='1.5' opacity='0.6'/%3E%3Ccircle cx='31' cy='25' r='2.8' fill='%23D4A0A0' opacity='0.6'/%3E%3Ccircle cx='23' cy='33' r='2.2' fill='%23C8926B' opacity='0.5'/%3E%3Ccircle cx='35' cy='18' r='2' fill='%23A0B8A0' opacity='0.5'/%3E%3Cpath d='M32 12 Q26 18 16 20' fill='none' stroke='%23C8926B' stroke-width='1' opacity='0.4'/%3E%3C/svg%3E") no-repeat;
+  border-radius: inherit;
+}
+
+/* Lighter corner decorations for smaller/embedded cards */
+.corners-spark {
+  position: relative;
+}
+.corners-spark::before {
+  content: '';
+  position: absolute; top: 2px; left: 4px;
+  width: 24px; height: 24px; pointer-events: none; z-index: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='5' cy='5' r='1.2' fill='%23C8926B' opacity='0.3'/%3E%3Ccircle cx='11' cy='3' r='0.8' fill='%23D4A0A0' opacity='0.3'/%3E%3Cpath d='M2 8 L4 6 L6 8 L4 10 Z' fill='%23A0B8A0' opacity='0.2'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* ===== Illustrated Empty State ===== */
+.illustrated-empty {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  background-color: #FFFBF2;
+  background-image:
+    radial-gradient(ellipse 50% 45% at 50% 40%, rgba(220,170,130,0.16) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 30% 65%, rgba(170,195,170,0.12) 0%, transparent 50%);
+  border: 2px dashed #D4CABC;
+  border-radius: 24px 8px 24px 8px / 20px 6px 20px 6px;
+}
+.illustrated-empty svg {
+  display: block;
+  margin: 0 auto 1rem;
+  opacity: 0.6;
+}
+
+/* ===== Decorative sketch divider ===== */
+.sketch-divider {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: #D4CABC; font-size: 0.6rem;
+}
+.sketch-divider::before, .sketch-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, #D4CABC, transparent);
+}
+
+/* Floral center divider variant */
+.divider-floral {
+  display: flex; align-items: center; gap: 0.6rem;
+  color: #C8926B; font-size: 0.65rem;
+  opacity: 0.5;
+}
+.divider-floral::before, .divider-floral::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, #D4CABC 30%, #D4CABC 70%, transparent);
+}
+
+/* ===== Watercolor hover effect for buttons/links ===== */
+.watercolor-hover {
+  transition: background-size 0.4s ease-out;
+  background-size: 100% 100%;
+}
+.watercolor-hover:hover {
+  background-image: radial-gradient(circle at center, rgba(200,146,107,0.10) 0%, transparent 70%);
+}
+
+/* ===== Watercolor glow for focus states ===== */
+.watercolor-focus:focus {
+  outline: none;
+  border-color: #C8926B;
+  box-shadow:
+    0 0 0 3px rgba(200,146,107,0.10),
+    0 0 0 6px rgba(200,146,107,0.05);
+}
+
+/* ===== Stat card with watercolor accent ===== */
+.stat-card {
+  background-color: #FFFBF2;
+  border: 2px solid #D4CABC;
+  border-radius: 20px 6px 20px 6px / 18px 5px 18px 5px;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease-out;
+  box-shadow: 2px 2px 0 rgba(74,63,53,0.03);
+}
+.stat-card::before {
+  content: '';
+  position: absolute; top: -20px; right: -20px;
+  width: 100px; height: 100px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,170,130,0.22) 0%, transparent 65%);
+  pointer-events: none;
+}
+.stat-card:hover {
+  border-color: #C8926B;
+  transform: translateY(-2px);
+  box-shadow: 3px 4px 0 rgba(200,146,107,0.06), 0 8px 20px rgba(74,63,53,0.05);
+}
+
+/* ===== Tag pill — watercolor tinted ===== */
+.tag-pill {
+  display: inline-flex; align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 12px 4px 12px 4px;
+  font-size: 0.7rem;
+  background-color: rgba(200,146,107,0.16);
+  color: #8A5D3E;
+  border: 1px solid rgba(200,146,107,0.25);
+}
+
 /* ===== Animations ===== */
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes scale-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
@@ -149,9 +343,20 @@ body::before {
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
+/* New: gentle floating animation (slower, softer) */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(0.5deg); }
+}
+@keyframes watercolor-spread {
+  from { background-size: 100% 100%; }
+  to { background-size: 120% 120%; }
+}
+
 .animate-fade-in { animation: fade-in 0.25s ease-out; }
 .animate-scale-in { animation: scale-in 0.25s ease-out; }
 .animate-slide-up { animation: slide-up 0.35s ease-out; }
+.animate-gentle-float { animation: gentle-float 4s ease-in-out infinite; }
 
 .animate-sparkle-out {
   --sx: 0px; --sy: 0px;
@@ -161,16 +366,6 @@ body::before {
 .animate-sparkle-out:nth-child(2) { --sx: 12px; --sy: -20px; }
 .animate-sparkle-out:nth-child(3) { --sx: -6px; --sy: -14px; }
 .animate-sparkle-out:nth-child(4) { --sx: 14px; --sy: -18px; }
-
-/* ===== Decorative sketch divider ===== */
-.sketch-divider {
-  display: flex; align-items: center; gap: 0.5rem;
-  color: #D4CABC; font-size: 0.6rem;
-}
-.sketch-divider::before, .sketch-divider::after {
-  content: ''; flex: 1; height: 1px;
-  background: linear-gradient(to right, transparent, #D4CABC, transparent);
-}
 
 /* ===== TipTap ===== */
 .tiptap-editor { min-height: 130px; padding: 0.5rem; }

@@ -51,7 +51,7 @@ export default function DailyQuestion() {
   const unanswered = questions.filter((q) => !q.answered);
 
   return (
-    <section className="bg-warm-paper border border-warm-border rounded-xl p-5">
+    <section className="watercolor-section">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="font-serif font-bold text-warm-brown">📝 今日OC问答</h2>
@@ -67,11 +67,17 @@ export default function DailyQuestion() {
         {questions.map((q) => (
           <div
             key={q.ocId}
-            className={`p-3 rounded-lg border transition-colors ${
+            className={`p-3 border transition-colors ${
               q.answered
-                ? "bg-green-50/50 border-green-200"
-                : "bg-amber-50/50 border-amber-200"
+                ? "border-green-200"
+                : "border-amber-200"
             }`}
+            style={{
+              borderRadius: "14px 4px 14px 4px / 12px 3px 12px 3px",
+              background: q.answered
+                ? "radial-gradient(ellipse 50% 50% at 70% 30%, rgba(160,184,160,0.06) 0%, transparent 60%), #FFFBF2"
+                : "radial-gradient(ellipse 50% 50% at 70% 30%, rgba(200,146,107,0.06) 0%, transparent 60%), #FFFBF2",
+            }}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
@@ -116,7 +122,8 @@ export default function DailyQuestion() {
                 />
                 <button
                   onClick={() => handleSubmit(q.ocId)}
-                  className="px-3 py-1.5 text-sm bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors"
+                  className="px-3 py-1.5 text-sm bg-amber-700 text-white hover:bg-amber-800 transition-colors"
+                  style={{ borderRadius: "12px 4px 12px 4px / 10px 3px 10px 3px" }}
                 >
                   保存
                 </button>
