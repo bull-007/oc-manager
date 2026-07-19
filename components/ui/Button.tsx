@@ -2,21 +2,19 @@ import { cn } from "@/lib/utils";
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "ghost" | "danger" | "watercolor";
+  variant?: "primary" | "secondary" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
 }
 
 const variants = {
   primary:
-    "bg-amber-700 text-warm-cream hover:bg-amber-800 border-amber-800",
+    "bg-amber-700 text-warm-cream hover:bg-amber-800 border-amber-700",
   secondary:
-    "bg-warm-paper text-warm-brown border-warm-border hover:bg-warm-cream",
+    "bg-warm-paper text-warm-brown border-warm-border hover:bg-warm-bg",
   ghost:
-    "bg-transparent text-warm-brown hover:bg-warm-cream border-transparent",
+    "bg-transparent text-warm-brown hover:bg-warm-bg border-transparent",
   danger:
-    "bg-red-600 text-white hover:bg-red-700 border-red-700",
-  watercolor:
-    "bg-warm-paper text-warm-brown border-warm-border hover:border-amber-400",
+    "bg-red-500 text-white hover:bg-red-600 border-red-500",
 };
 
 const sizes = {
@@ -31,7 +29,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center gap-2 border font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md relative overflow-hidden",
+          "inline-flex items-center justify-center gap-2 border font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md",
           variants[variant],
           sizes[size],
           className
@@ -39,14 +37,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         style={{ borderRadius: "16px 5px 16px 5px / 14px 4px 14px 4px" }}
         {...props}
       >
-        {/* Watercolor hover effect for watercolor variant */}
-        {variant === "watercolor" && (
-          <span className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-            style={{
-              background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(200,146,107,0.10) 0%, transparent 70%)",
-            }} />
-        )}
-        <span className="relative">{children}</span>
+        {children}
       </button>
     );
   }
